@@ -11,7 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
     ],
-    // Chunked sitemaps from `app/sitemap.ts` + `generateSitemaps()` — add more if build shows more `/sitemap/N.xml` routes
-    sitemap: [`${SITE_URL}/sitemap/0.xml`, `${SITE_URL}/sitemap/1.xml`],
+    // یک فایل `sitemap.ts` بدون generateSitemaps → آدرس استاندارد `/sitemap.xml`
+    sitemap: [`${SITE_URL}/sitemap.xml`],
   }
 }
