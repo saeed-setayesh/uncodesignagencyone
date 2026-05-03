@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import type { PageContent } from '@/types/content'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+import { getSiteOrigin } from '@/lib/site-url'
 
 export function buildMetadata(
   content: PageContent,
@@ -13,12 +12,13 @@ export function buildMetadata(
     neighborhood?: string
   }
 ): Metadata {
+  const site = getSiteOrigin()
   const service = params.service ?? 'web-design'
   const url = params.nationalHub
-    ? `${SITE_URL}/${service}/${params.industry}`
+    ? `${site}/${service}/${params.industry}`
     : params.neighborhood
-      ? `${SITE_URL}/${service}/${params.industry}/${params.city}/${params.neighborhood}`
-      : `${SITE_URL}/${service}/${params.industry}/${params.city}`
+      ? `${site}/${service}/${params.industry}/${params.city}/${params.neighborhood}`
+      : `${site}/${service}/${params.industry}/${params.city}`
 
   return {
     title: content.metaTitle,
@@ -42,7 +42,7 @@ export function buildMetadata(
 
 /** Canonical: `/{service}` — صفحهٔ اصلی هر سرویس */
 export function buildServiceRootMetadata(content: PageContent, service: string): Metadata {
-  const url = `${SITE_URL}/${service}`
+  const url = `${getSiteOrigin()}/${service}`
 
   return {
     title: content.metaTitle,

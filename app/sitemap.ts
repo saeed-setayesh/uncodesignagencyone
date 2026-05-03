@@ -2,8 +2,7 @@ import { cache } from 'react'
 import { asc, desc, eq } from 'drizzle-orm'
 import { blogPost, city, db, industry, job, service } from '@/lib/db'
 import type { MetadataRoute } from 'next'
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+import { getSiteOrigin } from '@/lib/site-url'
 
 /** Google: حداکثر ۵۰٬۰۰۰ URL در هر فایل sitemap */
 const CHUNK = 50_000
@@ -22,6 +21,7 @@ type SitemapItem = MetadataRoute.Sitemap[number]
  * به‌همراه صفحات اصلی سایت (خانه، تماس، …) و وبلاگ
  */
 const buildSitemap = async (): Promise<MetadataRoute.Sitemap> => {
+  const SITE_URL = getSiteOrigin()
   const [services, industries, cities, jobs, blogPosts] = await Promise.all([
     db
       .select({ slug: service.slug, updatedAt: service.updatedAt })

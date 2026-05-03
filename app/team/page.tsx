@@ -4,8 +4,9 @@ import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import { Monitor, Search, ShoppingCart, Share2, Smartphone, LifeBuoy, PenLine, Users, Target, Sparkles, ArrowLeft } from 'lucide-react'
 import type { Metadata } from 'next'
+import { getSiteOrigin } from '@/lib/site-url'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+const SITE = getSiteOrigin()
 
 const DESC =
   'تیم ۷ نفرهٔ متخصصان فناوری آنکو دیزاین؛ طراحی سایت، سئو، فروشگاه، اپلیکیشن و خدمات دیجیتال با هدف یاری کسب‌وکارهای ایرانی.'

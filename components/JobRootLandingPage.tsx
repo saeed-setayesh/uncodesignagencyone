@@ -16,7 +16,9 @@ import ProcessSection from '@/components/page-sections/ProcessSection'
 import BottomCta from '@/components/page-sections/BottomCta'
 import type { Metadata } from 'next'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+import { getSiteOrigin } from '@/lib/site-url'
+
+const SITE_URL = getSiteOrigin()
 
 interface Props {
   jobSlug: string

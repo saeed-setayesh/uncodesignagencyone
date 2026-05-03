@@ -5,10 +5,11 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import type { Metadata } from 'next'
+import { getSiteOrigin } from '@/lib/site-url'
 
 export const revalidate = 300
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+const SITE_URL = getSiteOrigin()
 
 export const metadata: Metadata = {
   title: 'وبلاگ — آنکو دیزاین',

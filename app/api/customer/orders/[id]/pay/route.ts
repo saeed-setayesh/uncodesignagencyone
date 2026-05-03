@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { customerOrder, db, paymentTransaction } from '@/lib/db'
 import { requireCustomerSession } from '@/lib/customer-api-auth'
 import { zarinpalCreatePayment } from '@/lib/payments/zarinpal'
+import { getServerCallbackOrigin } from '@/lib/site-url'
 
 export async function POST(_req: Request, context: { params: Promise<{ id: string }> }) {
   const auth = await requireCustomerSession()
@@ -24,7 +25,7 @@ export async function POST(_req: Request, context: { params: Promise<{ id: strin
     return NextResponse.json({ error: 'این سفارش قابل پرداخت نیست' }, { status: 400 })
   }
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? 'http://localhost:3000'
+  const site = getServerCallbackOrigin()
   const callbackUrl = `${site}/api/payments/zarinpal/callback`
 
   const snap = order.planSnapshot as { plan?: { name?: string }; serviceFa?: string }

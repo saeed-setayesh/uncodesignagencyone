@@ -2,13 +2,14 @@ import { desc, eq } from 'drizzle-orm'
 import { NextResponse } from 'next/server'
 import { customerOrder, db, paymentTransaction } from '@/lib/db'
 import { zarinpalVerify } from '@/lib/payments/zarinpal'
+import { getServerCallbackOrigin } from '@/lib/site-url'
 
 /** Zarinpal redirects browser here with ?Authority=&Status=OK|NOK */
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const authority = url.searchParams.get('Authority') ?? ''
   const status = url.searchParams.get('Status') ?? ''
-  const site = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ?? 'http://localhost:3000'
+  const site = getServerCallbackOrigin()
 
   if (!authority) {
     return NextResponse.redirect(`${site}/customer/orders?pay=error`)

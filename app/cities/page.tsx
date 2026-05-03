@@ -4,8 +4,9 @@ import { city, db } from '@/lib/db'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import type { Metadata } from 'next'
+import { getSiteOrigin } from '@/lib/site-url'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+const SITE = getSiteOrigin()
 
 export const revalidate = 3600
 

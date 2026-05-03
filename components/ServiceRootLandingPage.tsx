@@ -17,6 +17,7 @@ import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import FaqSection from '@/components/page-sections/FaqSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import BottomCta from '@/components/page-sections/BottomCta'
+import { getSiteOrigin } from '@/lib/site-url'
 
 interface Props {
   serviceSlug: string
@@ -47,7 +48,7 @@ export default async function ServiceRootLandingPage({ serviceSlug }: Props) {
 
   const plans = parseServicePricingPlans(row.pricingPlans, row.priceTier)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+  const siteUrl = getSiteOrigin()
   const pageUrl = `${siteUrl}/${serviceSlug}`
 
   const jsonLd = {

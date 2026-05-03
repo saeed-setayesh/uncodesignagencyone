@@ -7,10 +7,9 @@ import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import BlogMarkdown from '@/components/blog/BlogMarkdown'
 import type { Metadata } from 'next'
+import { getSiteOrigin } from '@/lib/site-url'
 
 export const revalidate = 300
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
 
 export async function generateMetadata({
   params,
@@ -28,7 +27,7 @@ export async function generateMetadata({
 
   const title = post.metaTitle?.trim() || `${post.title} | وبلاگ آنکو دیزاین`
   const description = (post.metaDescription?.trim() || post.excerpt).slice(0, 200)
-  const url = `${SITE_URL}/blog/${post.slug}`
+  const url = `${getSiteOrigin()}/blog/${post.slug}`
 
   return {
     title,
@@ -70,7 +69,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const section = svcRows[0]?.fa ?? post.serviceCategory
   const publishedIso = (post.publishedAt ?? post.createdAt).toISOString()
   const modifiedIso = post.updatedAt.toISOString()
-  const pageUrl = `${SITE_URL}/blog/${post.slug}`
+  const origin = getSiteOrigin()
+  const pageUrl = `${origin}/blog/${post.slug}`
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -85,7 +85,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     publisher: {
       '@type': 'Organization',
       name: 'آنکو دیزاین',
-      url: SITE_URL,
+      url: origin,
     },
   }
 

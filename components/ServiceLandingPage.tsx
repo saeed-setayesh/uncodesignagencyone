@@ -18,6 +18,7 @@ import BottomCta from '@/components/page-sections/BottomCta'
 import IndustryHubCityNav from '@/components/IndustryHubCityNav'
 import BlogMarkdown from '@/components/blog/BlogMarkdown'
 import { SITE_URGENCY_BAR } from '@/lib/site-urgency'
+import { getSiteOrigin } from '@/lib/site-url'
 import type { Metadata } from 'next'
 import type { PageContent } from '@/types/content'
 
@@ -149,7 +150,7 @@ export default async function ServiceLandingPage({
   const serviceFa = svcRow.fa
   const plans = parseServicePricingPlans(svcRow.pricingPlans, svcRow.priceTier)
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+  const siteUrl = getSiteOrigin()
   let pageUrl: string
   if (nationalHub) {
     pageUrl = `${siteUrl}/${service}/${industry}`

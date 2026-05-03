@@ -9,9 +9,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   serverExternalPackages: ['pg', 'bcryptjs'],
   turbopack: {
     root: projectRoot,

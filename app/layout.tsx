@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getMetadataBase } from '@/lib/site-url'
 import localFont from 'next/font/local'
 import './globals.css'
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   },
   description:
     'طراحی سایت حرفه‌ای برای کسب‌وکارهای ایرانی. تحویل ۱۴ روزه، پشتیبانی ۶ ماهه رایگان.',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'),
+  metadataBase: getMetadataBase(),
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

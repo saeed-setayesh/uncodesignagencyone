@@ -6,8 +6,9 @@ import { PortfolioProjectCard } from '@/components/portfolio/PortfolioProjectCar
 import { PORTFOLIO_SHOWCASE_PROJECTS } from '@/lib/portfolio-data'
 import { Sparkles } from 'lucide-react'
 import type { Metadata } from 'next'
+import { getSiteOrigin } from '@/lib/site-url'
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+const SITE = getSiteOrigin()
 const PORTFOLIO_DESC =
   'نمونه پروژه‌های طراحی سایت، سئو، شبکه‌های اجتماعی، فروشگاه اینترنتی، اپلیکیشن، پشتیبانی، تولید محتوا و ربات برای کسب‌وکارهای ایرانی.'
 

@@ -17,8 +17,9 @@ import JobPricingSection from '@/components/JobPricingSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import type { Metadata } from 'next'
 import type { PageContent } from '@/types/content'
+import { getSiteOrigin } from '@/lib/site-url'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://yourdomain.ir'
+const SITE_URL = getSiteOrigin()
 
 interface Props {
   jobSlug: string
