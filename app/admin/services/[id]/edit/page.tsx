@@ -23,6 +23,7 @@ export default async function EditServicePage({ params }: { params: Promise<{ id
         priceTier: row.priceTier,
         active: row.active,
         sortOrder: row.sortOrder,
+        deliverables: row.deliverables,
       }}
     />
   )

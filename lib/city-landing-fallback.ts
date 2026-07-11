@@ -1,6 +1,6 @@
 import type { City, Industry } from '@/lib/db'
 import type { PageContent } from "@/types/content";
-import { istganPhrase, provinceLabelFa } from "@/lib/province-fa";
+import { provinceLabelFa } from "@/lib/province-fa";
 import { SITE_URGENCY_BAR } from "@/lib/site-urgency";
 
 /**
@@ -14,7 +14,6 @@ export function buildCityLandingFallbackContent(
 ): PageContent {
   const place = city.fa;
   const provinceFa = provinceLabelFa(city.province);
-  const istgan = istganPhrase(city.province);
 
   const titleBase = `${serviceFa} برای ${industry.fa} در ${place}`;
   const metaTitle =
@@ -25,8 +24,8 @@ export function buildCityLandingFallbackContent(
   // متا: یک جمله که استان فقط اگر متمایز از نام شهر معنی‌دار است (معمولاً در متا کافیست یک بار)
   const metaDescription = (
     provinceFa && !metaDescRedundantWithCity(place, provinceFa)
-      ? `خدمات ${serviceFa} برای کسب‌وکارهای ${industry.fa} در ${place} و${istgan}؛ مشاوره، اجرا و پشتیبانی با قیمت شفاف.`
-      : `خدمات ${serviceFa} برای ${industry.fa} در ${place} — مشاوره، اجرا و پشتیبانی؛ قیمت و فازبندی شفاف.`
+      ? `به ${serviceFa} برای ${industry.fa} در ${place} نیاز دارید؟ تماس — قیمت شفاف، ${provinceFa}.`
+      : `به ${serviceFa} برای ${industry.fa} در ${place} نیاز دارید؟ تماس بگیرید — قیمت شفاف.`
   ).slice(0, 165);
 
   const heroSubtitle = buildNaturalHeroSubtitle(
@@ -45,26 +44,26 @@ export function buildCityLandingFallbackContent(
     stats: { projects: "+۱۴۰", satisfaction: "۹۷٪", rating: "۴.۹" },
     benefits: [
       {
-        title: "صنف و همان منطقه",
-        desc: `پیام و ساختار سایت مخصوص ${industry.fa} در ${place}؛ الگوهای کلیِ شهرهای دیگر کپی نمی‌شود.`,
+        title: "همین شهر، همین صنف شما",
+        desc: `${serviceFa} را برای کسب‌وکار ${industry.fa} در ${place} انجام می‌دهیم؛ متناسب با برند شما، نه قالب آمادهٔ جای دیگر.`,
       },
       {
-        title: "جستجو و تماس در همان ناحیه",
-        desc: `کلمات و صفحاتی که مردم ${place} واقعاً جستجو می‌کنند، همراه با فرم و مسیر تماس واضح.`,
+        title: "مسیر تماس برای مشتری شما",
+        desc: `معرفی خدمات، اعتماد و فرم درخواست طوری چیده می‌شود که مشتری ${place} راحت با شما ارتباط بگیرد.`,
       },
       {
-        title: "بودجه و فاز شفاف",
-        desc: "قبل از شروع، خروجی هر فاز و هزینه‌اش معلوم است؛ پشتیبانی پس از تحویل اگر در قرارداد باشد.",
+        title: "قیمت و فاز قبل از شروع معلوم",
+        desc: "می‌دانید هر مرحله چیست و چقدر تمام می‌شود؛ پشتیبانی بعد از تحویل اگر در قرارداد باشد.",
       },
       {
-        title: "از ایده تا اجرا",
-        desc: `برای ${serviceFa} تیم فنی و محتوا پشت‌صحنه دارد؛ گزارش منظم و اصلاح بر اساس بازخورد.`,
+        title: "اجرای کامل توسط ما",
+        desc: `تیم ما ${serviceFa} را تا تحویل پیش می‌برد؛ گزارش پیشرفت و اصلاح بر اساس بازخورد شما.`,
       },
     ],
     processSteps: [
       {
-        title: "مشاوره",
-        desc: `وضعیت فعلی ${industry.fa} شما در ${place} و هدف ۳ تا ۶ ماهه`,
+        title: "تماس و بیان نیاز",
+        desc: `می‌گویید در ${place} چه می‌خواهید؛ برای ${industry.fa} و ${serviceFa} هم‌تراز می‌کنیم`,
         timing: "هفته ۱",
       },
       {
@@ -99,8 +98,8 @@ export function buildCityLandingFallbackContent(
     ],
     faq: [
       {
-        q: `چرا ${serviceFa} اختصاصی برای ${industry.fa} در ${place}؟`,
-        a: `مشتری و رقبا در ${place} با شهر دیگر فرق دارند؛ متن و ساختار باید همانجا جذب کند، نه شعار کلی.`,
+        q: `چطور برای ${serviceFa} در ${place} با شما شروع کنم؟`,
+        a: `تماس یا فرم؛ نیاز کوتاه را بگویید. پیشنهاد اسکوپ و محدودهٔ هزینه برای همین صنف در همین شهر را می‌گیرید و در صورت توافق قرارداد می‌بندیم.`,
       },
       {
         q: "زمان اجرا معمولاً چقدر است؟",
@@ -116,8 +115,7 @@ export function buildCityLandingFallbackContent(
       },
     ],
     ctaHeading: `درخواست ${serviceFa} برای ${industry.fa} در ${place}`,
-    ctaSubtext:
-      "یک تماس کوتاه کافی است — مشاوره را رایگان شروع می‌کنیم و مسیر را شفاف می‌گوییم.",
+    ctaSubtext: 'تماس بگیرید — پاسخ و پیشنهاد سریع.',
     whatsappText: `سلام؛ درباره ${serviceFa} برای ${industry.fa} در ${place} می‌خواهم اطلاعات بگیرم`,
   };
 }
@@ -129,9 +127,7 @@ function metaDescRedundantWithCity(cityFa: string, provinceFa: string): boolean 
   );
 }
 
-/**
- * جملهٔ معرفی زیر تیتر: بدون ترکیب ناخوشایند «استان + نام انگلیسی» و بدون تکرار بی‌مورد شهر+استان
- */
+/** زیرتیتر هیرو: کوتاه — «این سرویس را می‌خواهید؟ تماس» */
 function buildNaturalHeroSubtitle(
   serviceFa: string,
   industryFa: string,
@@ -139,7 +135,7 @@ function buildNaturalHeroSubtitle(
   provinceFa: string | null,
 ): string {
   if (provinceFa && !metaDescRedundantWithCity(place, provinceFa)) {
-    return `${serviceFa} را برای کسب‌وکار ${industryFa} در ${place} (استان ${provinceFa}) طوری اجرا می‌کنیم که با جستجوی محلی و رقبای همان ناحیه بخواند — تمرکز روی تماس و اعتماد مشتری، نه الگوی تکراری از شهر دیگر.`;
+    return `به ${serviceFa} برای ${industryFa} در ${place} نیاز دارید؟ تماس بگیرید — قیمت شفاف، استان ${provinceFa}.`;
   }
-  return `${serviceFa} را برای ${industryFa} در ${place} طوری می‌سازیم که در نتایج محلی و میان رقبای همان منطقه دیده شوید: محتوا و ساختار مخصوص کسب‌وکار شما، نه کپی سایت‌های عمومی.`;
+  return `به ${serviceFa} برای ${industryFa} در ${place} نیاز دارید؟ با ما تماس بگیرید.`;
 }

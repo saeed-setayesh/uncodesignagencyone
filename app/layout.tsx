@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   description:
     'طراحی سایت حرفه‌ای برای کسب‌وکارهای ایرانی. تحویل ۱۴ روزه، پشتیبانی ۶ ماهه رایگان.',
   metadataBase: getMetadataBase(),
+  other: {
+    enamad: '38095567',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

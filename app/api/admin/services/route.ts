@@ -10,6 +10,8 @@ import { meetsMinServiceSeoWords, MIN_SERVICE_SEO_WORDS } from '@/lib/service-se
 import { serviceSlugConflictsWithJob } from '@/lib/slug-conflicts'
 import { PricingPlansSchema } from '@/types/pricing'
 import { buildDefaultPricingPlans } from '@/lib/default-pricing-plans'
+import { ServiceDeliverablesSchema } from '@/types/service-deliverables'
+import { DELIVERABLES_BY_SLUG } from '@/lib/service-deliverables-seed-data'
 
 const postSchema = z.object({
   slug: z.string().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
@@ -22,6 +24,7 @@ const postSchema = z.object({
   priceTier: z.number().int().min(1).max(3).optional(),
   active: z.boolean().optional(),
   sortOrder: z.number().int().optional(),
+  deliverables: z.unknown().nullable().optional(),
 })
 
 export async function GET() {
@@ -83,6 +86,17 @@ export async function POST(req: Request) {
       }
     }
 
+    let deliverablesValue: Record<string, unknown> | null = null
+    if (body.deliverables != null) {
+      const delParsed = ServiceDeliverablesSchema.safeParse(body.deliverables)
+      if (!delParsed.success) {
+        return NextResponse.json({ error: 'فرمت تحویل‌ها نامعتبر است' }, { status: 400 })
+      }
+      deliverablesValue = delParsed.data as Record<string, unknown>
+    } else if (DELIVERABLES_BY_SLUG[body.slug]) {
+      deliverablesValue = DELIVERABLES_BY_SLUG[body.slug] as Record<string, unknown>
+    }
+
     const now = new Date()
     const [created] = await db
       .insert(serviceTable)
@@ -93,7 +107,8 @@ export async function POST(req: Request) {
         seoBody: body.seoBody,
         metaTitle: body.metaTitle?.trim() || null,
         metaDescription: body.metaDescription?.trim() || null,
-        pricingPlans: plansParsed.data as Record<string, unknown>,
+        pricingPlans: plansParsed.data as unknown as Record<string, unknown>,
+        deliverables: deliverablesValue,
         excelCode: body.excelCode?.trim() || null,
         priceTier: tier,
         active: body.active ?? true,

@@ -3,18 +3,29 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Phone, MessageCircle, ChevronDown, Menu, X } from 'lucide-react'
-import { BrandMark } from '@/components/BrandMark'
+import { BrandLogo } from '@/components/BrandLogo'
 
 type ServiceItem = { slug: string; fa: string }
 
 interface Props {
   services: ServiceItem[]
-  /** موقعیت‌های شغلی فعال — لینک در هدر */
+  /** Hiring job pages only */
   jobs: ServiceItem[]
+  /** Non-AI learn topics for nav dropdown */
+  learnTopics: ServiceItem[]
+  hasAiCourses?: boolean
+  hasSoftwareProducts?: boolean
   phone: string
 }
 
-export default function NavbarClient({ services, jobs, phone }: Props) {
+export default function NavbarClient({
+  services,
+  jobs,
+  learnTopics,
+  hasAiCourses,
+  hasSoftwareProducts,
+  phone,
+}: Props) {
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(true)
   const [jobsOpen, setJobsOpen] = useState(true)
@@ -42,9 +53,8 @@ export default function NavbarClient({ services, jobs, phone }: Props) {
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-        <Link href="/" className="flex items-center gap-2 shrink-0 min-w-0" onClick={() => setOpen(false)}>
-          <BrandMark size="md" />
-          <span className="font-bold text-gray-900 text-lg hidden sm:inline truncate">آنکو دیزاین</span>
+        <Link href="/" className="flex items-center shrink-0 min-w-0" onClick={() => setOpen(false)}>
+          <BrandLogo size="md" />
         </Link>
 
         <div className="hidden md:flex items-center gap-1 text-sm text-gray-600">
@@ -109,6 +119,56 @@ export default function NavbarClient({ services, jobs, phone }: Props) {
               </div>
             </div>
           )}
+          {(learnTopics.length > 0 || hasAiCourses) && (
+            <div className="relative group">
+              <button
+                type="button"
+                className="flex items-center gap-1 px-2 py-1.5 rounded-lg hover:text-brand hover:bg-gray-50 transition-colors"
+                aria-haspopup="true"
+              >
+                آموزش
+                <ChevronDown className="w-4 h-4 opacity-60 group-hover:rotate-180 transition-transform" />
+              </button>
+              <div className="absolute end-0 top-full pt-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 min-w-[260px]">
+                <div className="bg-white border border-gray-100 rounded-xl shadow-lg py-2 max-h-[50vh] overflow-y-auto" role="menu">
+                  <Link
+                    href="/learn"
+                    className="block px-4 py-2.5 text-sm font-semibold text-brand hover:bg-brand/5"
+                    role="menuitem"
+                  >
+                    همه آموزش‌های خصوصی
+                  </Link>
+                  {hasAiCourses ? (
+                    <Link
+                      href="/learn/ai"
+                      className="block px-4 py-2.5 text-sm font-semibold text-violet-700 hover:bg-violet-50"
+                      role="menuitem"
+                    >
+                      دوره‌های هوش مصنوعی
+                    </Link>
+                  ) : null}
+                  {learnTopics.map((j) => (
+                    <Link
+                      key={j.slug}
+                      href={`/learn/${j.slug}`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-brand/5 hover:text-brand"
+                      role="menuitem"
+                    >
+                      آموزش {j.fa}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          {hasSoftwareProducts ? (
+            <Link
+              href="/software"
+              className="px-2 py-1.5 rounded-lg hover:text-brand hover:bg-gray-50 transition-colors hidden lg:inline-flex"
+            >
+              نرم‌افزار
+            </Link>
+          ) : null}
           <Link
             href="/portfolio"
             className="px-2 py-1.5 rounded-lg hover:text-brand hover:bg-gray-50 transition-colors"
@@ -257,6 +317,8 @@ export default function NavbarClient({ services, jobs, phone }: Props) {
                 </div>
               )}
               {[
+                { href: '/learn', label: 'آموزش‌های خصوصی' },
+                ...(hasSoftwareProducts ? [{ href: '/software', label: 'نرم‌افزار اختصاصی' }] : []),
                 { href: '/portfolio', label: 'نمونه کارها' },
                 { href: '/team', label: 'تیم ما' },
                 { href: '/blog', label: 'وبلاگ' },

@@ -1,7 +1,9 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import ServiceLandingPage, { generateServiceMetadata } from '@/components/ServiceLandingPage'
 import JobCityLandingPage, { generateJobCityMetadata } from '@/components/JobCityLandingPage'
 import { isReservedSlug } from '@/lib/reserved-slugs'
+import { getLegacyServiceRedirect } from '@/lib/service-slug-canonical'
+import { isAiLearningJob } from '@/lib/learning-jobs'
 import { and, eq } from 'drizzle-orm'
 import { db, job as jobT, service as serviceT } from '@/lib/db'
 import { NATIONAL_HUB_CITY_SLUG } from '@/lib/content'
@@ -16,6 +18,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, seg2 } = await params
   if (isReservedSlug(slug)) return {}
+  const legacyRedirect = getLegacyServiceRedirect(slug, seg2)
+  if (legacyRedirect) return {}
 
   const [svc] = await db
     .select()
@@ -31,7 +35,10 @@ export async function generateMetadata({
     .from(jobT)
     .where(and(eq(jobT.slug, slug), eq(jobT.active, true)))
     .limit(1)
-  if (j) return generateJobCityMetadata(slug, seg2)
+  if (j) {
+    if (isAiLearningJob(slug)) redirect(`/learn/${slug}`)
+    return generateJobCityMetadata(slug, seg2)
+  }
 
   return {}
 }
@@ -43,6 +50,8 @@ export default async function DynamicTwoSegmentPage({
 }) {
   const { slug, seg2 } = await params
   if (isReservedSlug(slug)) notFound()
+  const legacyRedirect = getLegacyServiceRedirect(slug, seg2)
+  if (legacyRedirect) redirect(legacyRedirect)
 
   const [svc] = await db
     .select()
@@ -65,7 +74,10 @@ export default async function DynamicTwoSegmentPage({
     .from(jobT)
     .where(and(eq(jobT.slug, slug), eq(jobT.active, true)))
     .limit(1)
-  if (j) return <JobCityLandingPage jobSlug={slug} citySlug={seg2} />
+  if (j) {
+    if (isAiLearningJob(slug)) redirect(`/learn/${slug}`)
+    return <JobCityLandingPage jobSlug={slug} citySlug={seg2} />
+  }
 
   notFound()
 }

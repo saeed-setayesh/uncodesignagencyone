@@ -38,8 +38,27 @@ export async function proxy(req: NextRequest) {
       login.searchParams.set('callbackUrl', pathname)
       return NextResponse.redirect(login)
     }
-    if (token.role === 'customer') {
-      return NextResponse.redirect(new URL('/customer', req.url))
+    return NextResponse.next()
+  }
+
+  if (pathname.startsWith('/api/student')) {
+    if (!token || token.role !== 'student') {
+      return unauthorizedJson()
+    }
+    return NextResponse.next()
+  }
+
+  if (pathname.startsWith('/student')) {
+    if (pathname === '/student/login') {
+      if (token?.role === 'student') {
+        return NextResponse.redirect(new URL('/student', req.url))
+      }
+      return NextResponse.next()
+    }
+    if (!token || token.role !== 'student') {
+      const login = new URL('/student/login', req.url)
+      login.searchParams.set('callbackUrl', pathname)
+      return NextResponse.redirect(login)
     }
     return NextResponse.next()
   }
@@ -56,9 +75,6 @@ export async function proxy(req: NextRequest) {
       login.searchParams.set('callbackUrl', pathname)
       return NextResponse.redirect(login)
     }
-    if (token.role === 'admin') {
-      return NextResponse.redirect(new URL('/admin', req.url))
-    }
     return NextResponse.next()
   }
 
@@ -66,5 +82,12 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/customer/:path*', '/api/admin/:path*', '/api/customer/:path*'],
+  matcher: [
+    '/admin/:path*',
+    '/customer/:path*',
+    '/student/:path*',
+    '/api/admin/:path*',
+    '/api/customer/:path*',
+    '/api/student/:path*',
+  ],
 }

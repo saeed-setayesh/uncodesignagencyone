@@ -1,6 +1,7 @@
 import { asc, eq } from 'drizzle-orm'
 import { db, service as serviceTable } from '@/lib/db'
 import { parseServicePricingPlans } from '@/lib/parse-pricing-plans'
+import { shouldShowInServiceCatalog } from '@/lib/service-slug-canonical'
 import { PlansCheckout } from './PlansCheckout'
 
 export default async function CustomerPlansPage() {
@@ -16,7 +17,9 @@ export default async function CustomerPlansPage() {
     .where(eq(serviceTable.active, true))
     .orderBy(asc(serviceTable.sortOrder), asc(serviceTable.fa))
 
-  const services = rows.map((r) => ({
+  const services = rows
+    .filter((r) => shouldShowInServiceCatalog(r.slug))
+    .map((r) => ({
     id: r.id,
     fa: r.fa,
     slug: r.slug,

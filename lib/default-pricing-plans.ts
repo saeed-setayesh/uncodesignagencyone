@@ -4,7 +4,7 @@ import type { PricingPlan } from '@/types/pricing'
 const TIER_MULTIPLIER: Record<number, number> = {
   1: 0.88,
   2: 1,
-  3: 1.2,
+  3: 1.15,
 }
 
 function formatToman(amount: number): string {
@@ -21,8 +21,8 @@ export function buildDefaultPricingPlans(priceTier: number): PricingPlan[] {
     {
       name: 'استارتر',
       description: 'مناسب برای شروع آنلاین',
-      priceLabel: `${formatToman(12_000_000 * mult)} تومان`,
-      originalPriceLabel: `${formatToman(18_000_000 * mult)} تومان`,
+      priceLabel: `از ${formatToman(9_000_000 * mult)} تومان`,
+      originalPriceLabel: `${formatToman(14_000_000 * mult)} تومان`,
       featured: false,
       features: [
         'طراحی ۵ صفحه',
@@ -36,8 +36,8 @@ export function buildDefaultPricingPlans(priceTier: number): PricingPlan[] {
     {
       name: 'حرفه‌ای',
       description: 'بهترین انتخاب برای کسب‌وکار شما',
-      priceLabel: `${formatToman(24_000_000 * mult)} تومان`,
-      originalPriceLabel: `${formatToman(35_000_000 * mult)} تومان`,
+      priceLabel: `از ${formatToman(18_000_000 * mult)} تومان`,
+      originalPriceLabel: `${formatToman(28_000_000 * mult)} تومان`,
       featured: true,
       features: [
         'طراحی تا ۱۵ صفحه',
@@ -53,7 +53,7 @@ export function buildDefaultPricingPlans(priceTier: number): PricingPlan[] {
     {
       name: 'فروشگاهی',
       description: 'برای فروش آنلاین محصولات',
-      priceLabel: `${formatToman(40_000_000 * mult)}+ تومان`,
+      priceLabel: `از ${formatToman(32_000_000 * mult)} تومان`,
       originalPriceLabel: null,
       featured: false,
       features: [

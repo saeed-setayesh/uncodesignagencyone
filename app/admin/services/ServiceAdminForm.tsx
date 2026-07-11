@@ -8,8 +8,12 @@ import { MIN_SERVICE_SEO_WORDS } from '@/lib/service-seo'
 import { buildSeedServiceSeoBody } from '@/lib/seed-default-seo-body'
 import { buildDefaultPricingPlans } from '@/lib/default-pricing-plans'
 import PricingPlansEditor from '@/components/admin/PricingPlansEditor'
+import DeliverablesEditor from '@/components/admin/DeliverablesEditor'
 import type { PricingPlan } from '@/types/pricing'
 import { PricingPlansSchema } from '@/types/pricing'
+import type { ServiceDeliverables } from '@/types/service-deliverables'
+import { ServiceDeliverablesSchema } from '@/types/service-deliverables'
+import { getDeliverablesFallback } from '@/lib/service-deliverables-fallback'
 
 type ServiceRow = {
   id?: string
@@ -23,6 +27,7 @@ type ServiceRow = {
   priceTier: number
   active: boolean
   sortOrder: number
+  deliverables?: unknown
 }
 
 export default function ServiceAdminForm({ initial }: { initial?: ServiceRow | null }) {
@@ -46,6 +51,11 @@ export default function ServiceAdminForm({ initial }: { initial?: ServiceRow | n
     }
     return buildDefaultPricingPlans(initial?.priceTier ?? 2)
   })
+  const [deliverables, setDeliverables] = useState<ServiceDeliverables>(() => {
+    const parsed = ServiceDeliverablesSchema.safeParse(initial?.deliverables)
+    if (parsed.success) return parsed.data
+    return getDeliverablesFallback(initial?.slug ?? 'web-design', initial?.fa ?? 'سرویس')
+  })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -66,6 +76,7 @@ export default function ServiceAdminForm({ initial }: { initial?: ServiceRow | n
         metaDescription: form.metaDescription.trim() || null,
         excelCode: form.excelCode.trim() || null,
         pricingPlans: plans,
+        deliverables,
       }
       const url = isEdit ? `/api/admin/services/${initial!.id}` : '/api/admin/services'
       const res = await fetch(url, {
@@ -226,6 +237,8 @@ export default function ServiceAdminForm({ initial }: { initial?: ServiceRow | n
           <h3 className="font-semibold text-gray-800 mb-4">چهار پلن قیمت</h3>
           <PricingPlansEditor plans={plans} onChange={setPlans} />
         </div>
+
+        <DeliverablesEditor value={deliverables} onChange={setDeliverables} />
 
         <div className="flex gap-3 flex-wrap">
           <button

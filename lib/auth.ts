@@ -1,6 +1,7 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { eq } from 'drizzle-orm'
-import { db, adminUser, customerUser } from '@/lib/db'
+import { db, adminUser, customerUser, studentUser } from '@/lib/db'
+import { normalizeStudentPhone } from '@/lib/student-phone'
 import bcrypt from 'bcryptjs'
 import type { NextAuthOptions } from 'next-auth'
 
@@ -57,6 +58,37 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    CredentialsProvider({
+      id: 'student-credentials',
+      name: 'Student',
+      credentials: {
+        phone: { label: 'Phone', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.phone || !credentials?.password) return null
+
+        const phone = normalizeStudentPhone(credentials.phone)
+        if (!phone) return null
+
+        const [row] = await db
+          .select()
+          .from(studentUser)
+          .where(eq(studentUser.phone, phone))
+          .limit(1)
+        if (!row || !row.active) return null
+
+        const valid = await bcrypt.compare(credentials.password, row.password)
+        if (!valid) return null
+
+        return {
+          id: row.id,
+          phone: row.phone,
+          name: row.name,
+          role: 'student' as const,
+        }
+      },
+    }),
   ],
   session: {
     strategy: 'jwt',
@@ -68,6 +100,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id
         token.role = user.role ?? 'admin'
         token.email = user.email ?? undefined
+        token.phone = user.phone ?? undefined
         token.name = user.name ?? undefined
       }
       return token
@@ -75,8 +108,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
-        session.user.role = (token.role as 'admin' | 'customer') ?? 'admin'
+        session.user.role = (token.role as 'admin' | 'customer' | 'student') ?? 'admin'
         session.user.email = token.email ?? session.user.email
+        session.user.phone = token.phone ?? undefined
         session.user.name = token.name ?? session.user.name
       }
       return session

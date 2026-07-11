@@ -1,18 +1,26 @@
 import type { ReactNode } from 'react'
-import { Phone, MessageCircle, Send, MapPin, Clock, Mail } from 'lucide-react'
+import { Phone, MessageCircle, Send, Clock, Mail } from 'lucide-react'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import ContactForm from './_components/ContactForm'
-import { getContactSettings } from '@/lib/settings'
+import {
+  CONTACT_POSTAL_ADDRESS,
+  CONTACT_POSTAL_CODE,
+  getContactSettings,
+} from '@/lib/settings'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'تماس با ما — آنکو دیزاین',
-  description: 'برای مشاوره رایگان با ما تماس بگیرید. تلفن مستقیم، واتس‌اپ، تلگرام، بله، روبیکا و ایتا.',
+  description: 'تماس با آنکو دیزاین — تلفن، تلگرام، فرم تماس و آدرس پستی.',
 }
 
 export const revalidate = 300
+
+const CONTACT_PHONE = '09031238349'
+const CONTACT_TELEGRAM_HANDLE = '@uncodesignadmin'
+const CONTACT_TELEGRAM_URL = 'https://t.me/uncodesignadmin'
 
 type Messenger = {
   name: string
@@ -21,7 +29,6 @@ type Messenger = {
   icon: ReactNode
 }
 
-/** فقط پیام‌رسان‌هایی که در تنظیمات مقدار دارند (بدون کارت خالی) */
 function getMessengers(s: Awaited<ReturnType<typeof getContactSettings>>): Messenger[] {
   const out: Messenger[] = []
   const waDigits = (s.whatsapp || '').replace(/\D/g, '')
@@ -80,6 +87,15 @@ function getMessengers(s: Awaited<ReturnType<typeof getContactSettings>>): Messe
   return out
 }
 
+function InfoRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="border-b border-gray-100 last:border-0 pb-5 last:pb-0">
+      <p className="text-sm font-semibold text-gray-500 mb-1">{label}</p>
+      <div className="text-gray-900 font-medium">{children}</div>
+    </div>
+  )
+}
+
 export default async function ContactPage() {
   const s = await getContactSettings()
   const messengers = getMessengers(s)
@@ -87,48 +103,30 @@ export default async function ContactPage() {
   return (
     <>
       <Navbar />
-      <main>
-
-        {/* ── Hero ── */}
-        <section className="bg-gradient-to-bl from-brand-dark via-brand to-brand-dark py-16 text-center">
-          <div className="max-w-2xl mx-auto px-4">
-            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4">تماس با ما</h1>
-            <p className="text-brand-light/95 text-lg">آماده پاسخگویی هستیم — سریع‌ترین راه تماس مستقیم است</p>
-          </div>
-        </section>
-
-        {/* ── Primary: Direct call ── */}
-        <section className="py-14 bg-white">
+      <main className="pt-8">
+        {/* ── تماس سریع ── */}
+        <section className="py-12 bg-white">
           <div className="max-w-xl mx-auto px-4 text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-brand/10 rounded-full mb-6">
-              <Phone className="w-10 h-10 text-brand" strokeWidth={1.5} />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-brand/10 rounded-full mb-4">
+              <Phone className="w-8 h-8 text-brand" strokeWidth={1.5} />
             </div>
-            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">تماس مستقیم</h2>
-            <p className="text-gray-500 mb-6">سریع‌ترین راه — همین الان زنگ بزنید</p>
+            <h1 className="text-2xl font-extrabold text-gray-900 mb-2">تماس سریع</h1>
+            <p className="text-gray-500 mb-5 text-sm">برای مشاوره رایگان همین الان تماس بگیرید</p>
             <a
-              href={`tel:${s.phone}`}
-              className="inline-flex items-center gap-3 bg-brand hover:bg-brand-dark text-white text-2xl font-extrabold px-10 py-5 rounded-2xl transition-colors shadow-lg shadow-brand/30 active:scale-95"
+              href={`tel:${CONTACT_PHONE}`}
+              className="inline-flex items-center gap-3 bg-brand hover:bg-brand-dark text-white text-xl font-extrabold px-8 py-4 rounded-2xl transition-colors shadow-lg shadow-brand/30 active:scale-95"
             >
-              <Phone className="w-7 h-7" />
-              {s.phone}
+              <Phone className="w-6 h-6" />
+              <span dir="ltr">{CONTACT_PHONE}</span>
             </a>
-            {s.hours && (
-              <div className="flex items-center justify-center gap-2 mt-5 text-sm text-gray-400">
-                <Clock className="w-4 h-4" />
-                {s.hours}
-              </div>
-            )}
           </div>
         </section>
 
-        {/* ── Messengers (فقط اگر حداقل یک مقدار در تنظیمات باشد) ── */}
+        {/* ── پیام‌رسان‌ها ── */}
         {messengers.length > 0 && (
-          <section className="py-14 bg-gray-50">
+          <section className="py-14 bg-gray-50 border-y border-gray-100">
             <div className="max-w-2xl mx-auto px-4">
-              <div className="text-center mb-10">
-                <h2 className="text-2xl font-extrabold text-gray-900 mb-2">پیام بدهید</h2>
-                <p className="text-gray-500">در هر پیام‌رسانی که راحت‌ترید — ما آنجا هستیم</p>
-              </div>
+              <h2 className="text-2xl font-extrabold text-gray-900 mb-8 text-center">پیام‌رسان‌ها</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {messengers.map((m) => (
                   <a
@@ -147,38 +145,68 @@ export default async function ContactPage() {
           </section>
         )}
 
-        {/* ── Info strip ── */}
-        {s.address && (
-          <section className="py-8 bg-white border-y border-gray-100">
-            <div className="max-w-2xl mx-auto px-4 flex flex-col sm:flex-row gap-6 items-center justify-center text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-brand flex-shrink-0" />
-                {s.address}
-              </div>
-              {s.hours && (
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-brand flex-shrink-0" />
-                  {s.hours}
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* ── Form (secondary) ── */}
-        <section className="py-14 bg-gray-50">
+        {/* ── فرم تماس ── */}
+        <section className="py-14 bg-white">
           <div className="max-w-xl mx-auto px-4">
             <div className="text-center mb-8">
               <Mail className="w-8 h-8 text-gray-400 mx-auto mb-3" />
               <h2 className="text-xl font-bold text-gray-900 mb-1">فرم تماس</h2>
-              <p className="text-gray-400 text-sm">اگر ترجیح می‌دهید پیامتان را بنویسید — پاسخ می‌دهیم</p>
+              <p className="text-gray-400 text-sm">
+                اگر ترجیح می‌دهید پیامتان را بنویسید — پاسخ می‌دهیم
+              </p>
             </div>
             <ContactForm />
           </div>
         </section>
 
-        <TestimonialsSection />
+        {/* ── اطلاعات تماس ── */}
+        <section className="py-14 bg-gray-50">
+          <div className="max-w-3xl mx-auto px-4">
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-8">اطلاعات تماس</h2>
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 space-y-5">
+              <InfoRow label="پشتیبانی تلگرام">
+                <a
+                  href={CONTACT_TELEGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand hover:text-brand-dark transition-colors"
+                  dir="ltr"
+                >
+                  {CONTACT_TELEGRAM_HANDLE}
+                </a>
+              </InfoRow>
 
+              <InfoRow label="تلفن">
+                <a
+                  href={`tel:${CONTACT_PHONE}`}
+                  className="text-brand hover:text-brand-dark transition-colors"
+                  dir="ltr"
+                >
+                  {CONTACT_PHONE}
+                </a>
+              </InfoRow>
+
+              <InfoRow label="کد پستی">
+                <span dir="ltr">{CONTACT_POSTAL_CODE}</span>
+              </InfoRow>
+
+              <InfoRow label="آدرس پستی">
+                <span className="leading-relaxed">{CONTACT_POSTAL_ADDRESS}</span>
+              </InfoRow>
+
+              {s.hours ? (
+                <InfoRow label="ساعات پاسخگویی">
+                  <span className="flex items-center gap-2 text-gray-700">
+                    <Clock className="w-4 h-4 text-brand flex-shrink-0" />
+                    {s.hours}
+                  </span>
+                </InfoRow>
+              ) : null}
+            </div>
+          </div>
+        </section>
+
+        <TestimonialsSection />
       </main>
       <Footer />
     </>

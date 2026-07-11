@@ -31,5 +31,6 @@ export async function PUT(req: Request) {
   }
 
   revalidatePath('/contact')
+  revalidatePath('/', 'layout')
   return NextResponse.json({ ok: true })
 }

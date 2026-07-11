@@ -1,14 +1,23 @@
 import Link from 'next/link'
-import { count, desc, eq } from 'drizzle-orm'
-import { city, db, generatedPage, industry } from '@/lib/db'
+import { count, desc, eq, inArray, sql } from 'drizzle-orm'
+import AdminRevenueSection from '@/components/admin/AdminRevenueSection'
+import { getAdminRevenueStats } from '@/lib/admin-revenue-stats'
+import { city, db, generatedPage, industry, studentEnrollment } from '@/lib/db'
 
 export const revalidate = 0
 
 export default async function AdminDashboard() {
-  const [cityCountRow, industryCountRow, pageCountRow, recentRows] = await Promise.all([
+  const [cityCountRow, industryCountRow, pageCountRow, pendingPayRow, recentRows, revenueStats] =
+    await Promise.all([
     db.select({ c: count() }).from(city).where(eq(city.active, true)),
     db.select({ c: count() }).from(industry).where(eq(industry.active, true)),
     db.select({ c: count() }).from(generatedPage),
+    db
+      .select({ c: sql<number>`count(*)::int` })
+      .from(studentEnrollment)
+      .where(
+        inArray(studentEnrollment.status, ['payment_1_review', 'payment_2_review'] as string[])
+      ),
     db
       .select({
         id: generatedPage.id,
@@ -24,6 +33,7 @@ export default async function AdminDashboard() {
       .innerJoin(city, eq(generatedPage.cityId, city.id))
       .orderBy(desc(generatedPage.createdAt))
       .limit(5),
+    getAdminRevenueStats(5),
   ])
 
   const cityCount = Number(cityCountRow[0]?.c ?? 0)
@@ -32,12 +42,20 @@ export default async function AdminDashboard() {
 
   const totalPossible = cityCount * industryCount
   const pending = Math.max(0, totalPossible - pageCount)
+  const pendingStudentPayments = Number(pendingPayRow[0]?.c ?? 0)
 
   const stats = [
     { label: 'صفحات تولیدشده', value: pageCount.toLocaleString('fa-IR'), color: 'bg-brand', href: '/admin/pages' },
     { label: 'شهرهای فعال', value: cityCount.toLocaleString('fa-IR'), color: 'bg-brand-dark', href: '/admin/cities' },
     { label: 'صنف‌های فعال', value: industryCount.toLocaleString('fa-IR'), color: 'bg-brand/80', href: '/admin/industries' },
     { label: 'در انتظار تولید', value: pending.toLocaleString('fa-IR'), color: 'bg-brand-dark/90', href: '/admin/pages' },
+    {
+      label: 'درآمد تأییدشده',
+      value: revenueStats.totalConfirmedToman.toLocaleString('fa-IR'),
+      color: 'bg-emerald-600',
+      href: '/admin/revenue',
+      suffix: ' تومان',
+    },
   ]
 
   return (
@@ -47,11 +65,16 @@ export default async function AdminDashboard() {
         <p className="text-sm text-gray-500 mt-1">خلاصه وضعیت سیستم</p>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {stats.map((s) => (
           <Link key={s.label} href={s.href} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
             <div className={`w-10 h-10 ${s.color} rounded-lg mb-3`} />
-            <div className="text-2xl font-bold text-gray-900">{s.value}</div>
+            <div className="text-2xl font-bold text-gray-900">
+              {s.value}
+              {'suffix' in s && s.suffix ? (
+                <span className="text-sm font-semibold text-gray-500">{s.suffix}</span>
+              ) : null}
+            </div>
             <div className="text-sm text-gray-500 mt-0.5">{s.label}</div>
           </Link>
         ))}
@@ -88,7 +111,23 @@ export default async function AdminDashboard() {
             <div className="text-xs text-gray-500">تولید، حذف و بازسازی صفحات</div>
           </div>
         </Link>
+        <Link
+          href="/admin/students"
+          className="bg-white border border-gray-200 rounded-xl p-5 hover:border-brand hover:shadow-sm transition-all flex items-center gap-3"
+        >
+          <div className="w-10 h-10 bg-brand-light rounded-lg flex items-center justify-center text-brand font-bold text-xl">🎓</div>
+          <div>
+            <div className="font-semibold text-gray-900 text-sm">دانشجویان</div>
+            <div className="text-xs text-gray-500">
+              {pendingStudentPayments > 0
+                ? `${pendingStudentPayments.toLocaleString('fa-IR')} پرداخت در انتظار تأیید`
+                : 'مدیریت دوره و پرداخت'}
+            </div>
+          </div>
+        </Link>
       </div>
+
+      <AdminRevenueSection stats={revenueStats} />
 
       {recentRows.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100">

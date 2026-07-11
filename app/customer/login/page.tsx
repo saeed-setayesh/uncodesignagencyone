@@ -3,11 +3,11 @@
 import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { BrandMark } from '@/components/BrandMark'
+import { useSearchParams } from 'next/navigation'
+import { redirectAfterSignIn } from '@/lib/auth-redirect'
+import { BrandLogo } from '@/components/BrandLogo'
 
 function CustomerLoginForm() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/customer'
 
@@ -32,7 +32,7 @@ function CustomerLoginForm() {
     if (result?.error) {
       setError('ایمیل یا رمز عبور اشتباه است')
     } else {
-      router.push(callbackUrl.startsWith('/') ? callbackUrl : '/customer')
+      redirectAfterSignIn(callbackUrl.startsWith('/') ? callbackUrl : '/customer')
     }
   }
 
@@ -41,8 +41,8 @@ function CustomerLoginForm() {
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="text-center mb-8">
-            <div className="mx-auto mb-4">
-              <BrandMark size="lg" />
+            <div className="mx-auto mb-4 flex justify-center">
+              <BrandLogo size="lg" />
             </div>
             <h1 className="text-xl font-bold text-gray-900">ورود مشتریان</h1>
             <p className="text-sm text-gray-500 mt-1">پنل پیگیری سفارش و پشتیبانی</p>
@@ -86,11 +86,18 @@ function CustomerLoginForm() {
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
-            حساب ندارید؟{' '}
-            <Link href="/customer/register" className="text-brand font-medium hover:underline">
-              ثبت‌نام
-            </Link>
+          <p className="text-center text-sm text-gray-500 mt-6 space-y-2">
+            <span className="block">
+              حساب ندارید؟{' '}
+              <Link href="/customer/register" className="text-brand font-medium hover:underline">
+                ثبت‌نام
+              </Link>
+            </span>
+            <span className="block">
+              <Link href="/student/login" className="text-brand font-medium hover:underline">
+                ورود به پنل دانشجو
+              </Link>
+            </span>
           </p>
         </div>
       </div>

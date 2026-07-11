@@ -2,7 +2,9 @@ import Link from 'next/link'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
-import { PortfolioProjectCard } from '@/components/portfolio/PortfolioProjectCard'
+import { PortfolioShowcaseCard } from '@/components/portfolio/PortfolioShowcaseCard'
+import { PortfolioShowcaseCarousel } from '@/components/portfolio/PortfolioShowcaseCarousel'
+import PriceCalculatorPromoSection from '@/components/page-sections/PriceCalculatorPromoSection'
 import { PORTFOLIO_SHOWCASE_PROJECTS } from '@/lib/portfolio-data'
 import { Sparkles } from 'lucide-react'
 import type { Metadata } from 'next'
@@ -44,16 +46,16 @@ export default function PortfolioPage() {
       <main>
         <section className="bg-gradient-to-b from-brand-light/40 to-gray-50 border-b border-brand/10">
           <div className="max-w-4xl mx-auto px-4 py-14 md:py-20 text-center">
-            <div className="inline-flex items-center gap-2 bg-white/80 border border-brand/20 rounded-full px-4 py-1.5 text-sm text-brand-dark mb-6">
+            <div className="inline-flex items-center gap-2 bg-white/80 border border-brand/20 rounded-full px-4 py-1.5 text-sm text-brand-dark mb-6 shadow-sm">
               <Sparkles className="w-4 h-4" />
-              پروژه‌های واقعی — حوزه‌های مختلف
+              نمونه‌های واقعی، نه نمونهٔ فرضی
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight mb-5">
-              نمونه کارها و تجربهٔ پروژه
+            <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-5">
+              قبل از قرارداد، کیفیت اجرا را ببینید
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
-              در این صفحه بخشی از نمونه‌های بصری و پروژه‌های منتخب را می‌بینید؛ برای جزئیات بیشتر و خدمات اختصاصی،
-              صفحهٔ تماس و سرویس‌های سایت را ببینید.
+              CRM، فروشگاه، فین‌تک، سینما و آموزش — همان سطحی که برای پروژهٔ شما اجرا می‌کنیم. هر پروژه چند نمای
+              تصویری دارد.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
@@ -92,22 +94,42 @@ export default function PortfolioPage() {
 
         <section className="py-14 md:py-16 bg-gray-50/80 border-b border-gray-100">
           <div className="max-w-6xl mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-14">
+              {PORTFOLIO_SHOWCASE_PROJECTS.map((project) => (
+                <PortfolioShowcaseCard key={project.id} project={project} />
+              ))}
+            </div>
             <div className="text-center max-w-2xl mx-auto mb-10">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">نمونه‌های تصویری وب‌سایت و محصول</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">نماهای هر پروژه</h2>
               <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                برای هر پروژه، چند اسکرین‌شات مرتبط در یک کارت است؛ اگر بیش از یک تصویر باشد با تامبنیل‌های زیر میان
-                نماها جابه‌جا شوید.
+                کاروسل هر پروژه را بکشید یا با دکمه جابه‌جا شوید.
               </p>
             </div>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
+            <ul className="flex flex-col gap-12 md:gap-14">
               {PORTFOLIO_SHOWCASE_PROJECTS.map((project) => (
-                <li key={project.id}>
-                  <PortfolioProjectCard title={project.title} description={project.description} images={project.images} />
+                <li key={project.id} className="border-b border-gray-100 pb-12 md:pb-14 last:border-0 last:pb-0">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <span className="text-xs font-semibold rounded-full bg-brand/10 text-brand px-2.5 py-0.5">
+                      {project.category}
+                    </span>
+                    <span className="text-xs text-gray-500">{project.industry}</span>
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
+                  <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-5 max-w-3xl">{project.description}</p>
+                  {project.metrics ? (
+                    <p className="text-sm text-brand font-medium mb-4">{project.metrics}</p>
+                  ) : null}
+                  <PortfolioShowcaseCarousel
+                    compact
+                    slides={project.images.map((src) => ({ src, alt: project.title }))}
+                  />
                 </li>
               ))}
             </ul>
           </div>
         </section>
+
+        <PriceCalculatorPromoSection />
 
         <TestimonialsSection />
 

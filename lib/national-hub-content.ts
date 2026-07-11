@@ -1,89 +1,109 @@
-import type { Industry } from '@/lib/db'
-import type { PageContent } from '@/types/content'
-import { SITE_URGENCY_BAR } from '@/lib/site-urgency'
+import type { Industry } from "@/lib/db";
+import type { PageContent } from "@/types/content";
+import { SITE_URGENCY_BAR } from "@/lib/site-urgency";
 
-const AREA = 'سراسر ایران'
+const AREA = "سراسر ایران";
 
-/** SEO-rich placeholder when no DB row exists for (industry × «ایران» national hub). Admin AI can replace later. */
+/** وقتی ردیف GeneratedPage نیست — مخاطب صاحب کسب‌وکار است که می‌خواهد همین سرویس را از آژانس بگیرد، نه متن‌های مبهم فقط برای سئو */
 export function buildNationalHubFallbackContent(
   industry: Industry,
   _serviceSlug: string,
-  serviceFa: string
+  serviceFa: string,
 ): PageContent {
-  const titleBase = `${serviceFa} ${industry.fa}`
+  const titleBase = `${serviceFa} برای ${industry.fa}`;
   const metaTitle =
-    titleBase.length <= 70 ? `${titleBase} — ${AREA}` : `${titleBase.slice(0, 55)}… — ${AREA}`.slice(0, 70)
+    titleBase.length <= 70
+      ? `${titleBase} — ${AREA}`
+      : `${titleBase.slice(0, 55)}… — ${AREA}`.slice(0, 70);
 
-  const metaDescription = `خدمات ${serviceFa} حرفه‌ای برای ${industry.fa} در ${AREA}. مشاوره، قیمت شفاف، تحویل سریع و پشتیبانی — همین امروز درخواست دهید.`.slice(
-    0,
-    165
-  )
+  const metaDescription =
+    `به ${serviceFa} برای ${industry.fa} نیاز دارید؟ تماس بگیرید — ${AREA}، قیمت شفاف.`.slice(
+      0,
+      165,
+    );
 
   return {
     metaTitle: metaTitle.slice(0, 70),
     metaDescription,
-    h1: `${serviceFa} تخصصی برای ${industry.fa}`,
-    heroSubtitle: `آژانس ما ${serviceFa} را برای کسب‌وکارهای ${industry.fa} در ${AREA} طراحی کرده است؛ شفاف، سریع و متناسب با نیاز واقعی بازار.`,
+    h1: `${serviceFa} حرفه‌ای برای کسب‌وکارهای ${industry.fa}`,
+    /** یک جمله: نیاز؟ تماس. */
+    heroSubtitle: `به ${serviceFa} برای ${industry.fa} نیاز دارید؟ با ما تماس بگیرید —قیمت و زمان بندی مشخص بدون نیاز به پیش پرداخت، اجرا در ${AREA}.`,
     urgencyText: SITE_URGENCY_BAR,
-    stats: { projects: '+۱۸۰', satisfaction: '۹۸٪', rating: '۴.۹' },
+    stats: { projects: "+۱۸۰", satisfaction: "۹۸٪", rating: "۴.۹" },
     benefits: [
       {
-        title: 'تمرکز روی صنعت شما',
-        desc: `استراتژی و اجرای ${serviceFa} مخصوص ${industry.fa}، نه قالب‌های کلی.`,
+        title: "برای کارفرما، نه شعار تبلیغاتی",
+        desc: `اجرای ${serviceFa} متناسب با برند و نیاز واقعی ${industry.fa} شما؛ قرارداد و خروجی هر مرحله قبل از شروع مشخص است.`,
       },
       {
-        title: 'سئو و بازاریابی محور',
-        desc: 'ساختار محتوا و لندینگ‌ها برای رتبه‌گیری در گوگل و تبدیل بازدید به لید.',
+        title: "یک تماس، مسیر روشن",
+        desc: "نیاز و بودجه را می‌گویید؛ ما نقشهٔ کار، زمان تقریبی و هزینهٔ مرحله‌ای را برمی‌گردانیم — بدون ابهام.",
       },
       {
-        title: 'قرارداد شفاف',
-        desc: 'بودجه و فازبندی مشخص؛ بدون هزینه‌های پنهان.',
+        title: "اجرای تخصصی همین صنف",
+        desc: `زبان محتوا، ساختار لندینگ یا کمپین با مخاطب ${industry.fa} هماهنگ است؛ قالب آمادهٔ شهر دیگر تحویل نمی‌گیرید.`,
       },
       {
-        title: 'پشتیبانی واقعی',
-        desc: 'تیم فنی در دسترس پس از تحویل؛ آموزش و به‌روزرسانی.',
+        title: "همراهی تا تحویل و بعدش",
+        desc: "پس از تحویل، در صورت توافق آموزش، اصلاحات و پشتیبانی در دسترس است.",
       },
     ],
     processSteps: [
-      { title: 'مشاوره و تحلیل نیاز', desc: `بررسی اهداف ${industry.fa} و مخاطب هدف در ${AREA}`, timing: 'روز ۱–۲' },
-      { title: 'پیشنهاد فنی و محتوا', desc: 'ارائه اسکچ، نقشه سایت یا نقشه سئو/کمپین', timing: 'روز ۳–۷' },
-      { title: 'اجرای پروژه', desc: 'توسعه، تست، بهینه‌سازی سرعت و تجربه کاربری', timing: '۲ تا ۶ هفته' },
-      { title: 'تحویل و رشد', desc: 'آموزش، گزارش، و بهبود مداوم بر اساس داده', timing: 'پس از تحویل' },
+      {
+        title: "تماس یا درخواست",
+        desc: `می‌گویید چه می‌خواهید؛ برای ${industry.fa} و ${serviceFa} هم‌تراز می‌کنیم.`,
+        timing: "روز ۱–۲",
+      },
+      {
+        title: "پیشنهاد فنی و قیمت",
+        desc: "اسکوپ، زمان‌بندی و هزینهٔ هر فاز به‌صورت شفاف روی کاغذ",
+        timing: "همان هفته",
+      },
+      {
+        title: "اجرای پروژه",
+        desc: `${serviceFa} تا تحویل طبق قرارداد؛ گزارش پیشرفت`,
+        timing: "۲ تا ۶ هفته و بیشتر بسته به حجم",
+      },
+      {
+        title: "تحویل و ادامه",
+        desc: "آموزش، بهینه‌سازی و در صورت نیاز قرارداد نگهداری",
+        timing: "پس از تحویل",
+      },
     ],
     testimonials: [
       {
-        text: `کیفیت کار و پیگیری تیم برای ${serviceFa} ${industry.fa} فراتر از انتظار بود؛ تعداد تماس‌های ما رشد کرد.`,
-        name: 'مدیر یک کسب‌وکار',
+        text: `برای ${industry.fa} همان چیزی را که برای رشد آنلاین لازم داشتیم با تماس اول روشن کردند؛ ${serviceFa} را تحویل گرفتیم بدون حاشیه.`,
+        name: "مدیر یک کسب‌وکار",
         business: `${industry.fa} — ${AREA}`,
-        initials: 'م',
+        initials: "م",
       },
       {
-        text: 'قیمت شفاف بود و تحویل به‌موقع؛ برای ورود جدی به آنلاین همین را توصیه می‌کنم.',
-        name: 'مالک مجموعه',
+        text: "قرارداد شفاف بود؛ می‌دانستیم هر فاز چه می‌شود و چقدر تمام می‌شود.",
+        name: "مالک مجموعه",
         business: industry.fa,
-        initials: 'م',
+        initials: "م",
       },
     ],
     faq: [
       {
-        q: `چرا ${serviceFa} اختصاصی برای ${industry.fa} مهم است؟`,
-        a: `هر صنعت مسیر و مخاطب متفاوتی دارد؛ ${serviceFa} باید با زبان همان بازار و نیاز واقعی مشتری شما هم‌راستا باشد.`,
+        q: `چطور برای ${serviceFa} و ${industry.fa} با شما شروع کنم؟`,
+        a: `تماس یا پیام در واتساپ/فرم؛ نیاز کوتاه را بگویید. پیشنهاد اولیه و محدودهٔ هزینه را می‌گیرید؛ اگر جلو رفتید قرارداد می‌بندیم.`,
       },
       {
-        q: `آیا در تمام شهرها خدمت می‌دهید؟`,
-        a: `بله؛ پروژه‌ها را به‌صورت ریموت مدیریت می‌کنیم و در صورت نیاز جلسات حضوری در شهرهای منتخب هماهنگ می‌شود.`,
+        q: `آیا در همهٔ شهرها کار می‌کنید؟`,
+        a: `بله؛ پروژه را از راه دور پیش می‌بریم. برای هر شهر هم می‌توانید از صفحهٔ همان شهر همان صنف وارد شوید تا هماهنگی محلی ذکر شود.`,
       },
       {
-        q: 'زمان تا تحویل معمولاً چقدر است؟',
-        a: 'بسته به پیچیدگی بین چند هفته تا چند ماه؛ در قرارداد فازها و تاریخ تحویل شفاف ذکر می‌شود.',
+        q: "زمان تحویل معمولاً چقدر است؟",
+        a: "بسته به حجم؛ بعد از دیدن اسکوپ، بازهٔ هفته‌ای یا ماهانه در پیشنهاد نوشته می‌شود.",
       },
       {
-        q: 'چطور قیمت تمام می‌شود؟',
-        a: 'پس از بررسی دامنه پروژه، پیشنهاد بودجه مرحله‌به‌مرحله ارسال می‌شود؛ بدون هزینه پنهان.',
+        q: "قیمت چطور تمام می‌شود؟",
+        a: "پیشنهاد مرحله‌به‌مرحله؛ بدون هزینهٔ پنهان در همان بخش‌های اصلی قرارداد.",
       },
     ],
-    ctaHeading: `مشاوره رایگان ${serviceFa} برای ${industry.fa}`,
-    ctaSubtext: 'یک تماس کوتاه می‌تواند مسیر رشد آنلاین شما را روشن کند.',
-    whatsappText: `سلام؛ درباره ${serviceFa} برای ${industry.fa} در ${AREA} می‌خواهم مشاوره بگیرم`,
-  }
+    ctaHeading: `نیاز به ${serviceFa} دارید؟ تماس بگیرید`,
+    ctaSubtext: "یک تماس یا پیام — پاسخ و پیشنهاد شفاف.",
+    whatsappText: `سلام؛ برای ${serviceFa} در حوزهٔ ${industry.fa} می‌خواهم با شما همکاری کنم (${AREA})`,
+  };
 }

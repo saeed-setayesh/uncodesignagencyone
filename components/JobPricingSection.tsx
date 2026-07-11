@@ -13,14 +13,15 @@ export default function JobPricingSection({ jobFa, jobSlug, plans }: Props) {
   const gridCols = plans.length >= 4 ? 'md:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-2'
 
   return (
-    <section className="py-16 bg-white" aria-label="تعرفه همکاری">
+    <section className="py-16 bg-white" aria-label={`تعرفه بهره‌گیری از ${jobFa}`}>
       <div className="max-w-6xl mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-900 mb-3">
-          تعرفه همکاری برای {jobFa}
+          تعرفهٔ بهره‌گیری از {jobFa} برای پروژهٔ شما
         </h2>
         <p className="text-center text-gray-500 mb-5 max-w-2xl mx-auto leading-relaxed">
-          چهار سطح: پروژه ساده از حدود ۲۰ میلیون تومان، تخصصی حدود ۴۰ میلیون، فول‌تایم از حدود ۶۰ میلیون و سطح
-          خبره با مذاکره. برای اعلام دقیق و قرارداد، لطفاً با ما در تماس باشید.
+          چهار سطح برای همکاری با این تخصص از تیم ما (از حدود ۲۰ میلیون برای پروژهٔ ساده تا پلن‌های گسترده‌تر و سطح
+          خبره با مذاکره). مبلغ دقیق بعد از اینکه نیاز و اسکوپ را با هم مرور کنیم اعلام می‌شود — با تماس یا فرم درخواست
+          شروع کنید.
         </p>
 
         <div className={`grid grid-cols-1 gap-6 ${gridCols}`}>
@@ -80,7 +81,7 @@ export default function JobPricingSection({ jobFa, jobSlug, plans }: Props) {
                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                 }`}
               >
-                تماس با ما
+                تماس برای پیشنهاد دقیق
               </Link>
             </div>
           ))}

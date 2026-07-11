@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import ServiceLandingPage, { generateServiceMetadata } from '@/components/ServiceLandingPage'
 import { isReservedSlug } from '@/lib/reserved-slugs'
+import { getLegacyServiceRedirect } from '@/lib/service-slug-canonical'
 import { and, eq } from 'drizzle-orm'
 import { db, service as serviceT } from '@/lib/db'
 import type { Metadata } from 'next'
@@ -14,6 +15,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug, seg2, seg3 } = await params
   if (isReservedSlug(slug)) return {}
+  const legacyRedirect = getLegacyServiceRedirect(slug, `${seg2}/${seg3}`)
+  if (legacyRedirect) return {}
 
   const [svc] = await db
     .select()
@@ -32,6 +35,8 @@ export default async function DynamicThreeSegmentPage({
 }) {
   const { slug, seg2, seg3 } = await params
   if (isReservedSlug(slug)) notFound()
+  const legacyRedirect = getLegacyServiceRedirect(slug, `${seg2}/${seg3}`)
+  if (legacyRedirect) redirect(legacyRedirect)
 
   const [svc] = await db
     .select()

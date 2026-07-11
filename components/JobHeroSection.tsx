@@ -26,7 +26,7 @@ export default function JobHeroSection({ h1, subtitle, urgencyText, contactHref 
             href={contactHref}
             className="bg-brand text-white px-8 py-3.5 rounded-xl font-semibold text-lg hover:bg-brand-dark transition-colors shadow-lg shadow-brand/30"
           >
-            تماس با ما
+            درخواست همکاری / تماس
           </Link>
           <Link
             href="/team"
@@ -36,24 +36,28 @@ export default function JobHeroSection({ h1, subtitle, urgencyText, contactHref 
           </Link>
         </div>
 
+        <p className="text-sm text-gray-500 max-w-xl mx-auto mb-8 leading-relaxed">
+          این صفحه برای کارفرمایانی است که می‌خواهند این تخصص را از طریق ما روی پروژهٔ خود داشته باشند. نیاز خود را بگویید تا پیشنهاد بدهیم.
+        </p>
+
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">
           <span className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
-            تعرفه چهار سطح — از ساده تا خبره
+            تماس و تشریح نیاز شما
           </span>
           <span className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
-            مسیر شفاف از تماس تا قرارداد
+            پیشنهاد اسکوپ و تعرفه شفاف
           </span>
           <span className="flex items-center gap-1.5">
             <svg className="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
-            پشتیبانی و هماهنگی تیم
+            شروع همکاری با قرارداد مشخص
           </span>
         </div>
       </div>

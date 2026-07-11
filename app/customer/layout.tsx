@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { BrandMark } from '@/components/BrandMark'
+import { BrandLogo } from '@/components/BrandLogo'
 
 const navItems = [
   { href: '/customer', label: 'داشبورد', icon: '⊞' },
@@ -23,7 +23,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
       <aside className="w-56 bg-white border-s border-gray-200 flex flex-col fixed inset-y-0 start-0">
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
-            <BrandMark size="sm" />
+            <BrandLogo size="sm" showWordmark={false} />
             <div>
               <div className="font-bold text-gray-900 text-sm">پنل مشتری</div>
               <div className="text-xs text-gray-500">آنکو دیزاین</div>

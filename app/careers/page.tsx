@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import type { Metadata } from 'next'
 import { getSiteOrigin } from '@/lib/site-url'
+import { isHiringJob } from '@/lib/learning-jobs'
 
 const SITE = getSiteOrigin()
 const CAREERS_DESC =
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
 }
 
 export default async function CareersPage() {
-  const jobs = await db
+  const allJobs = await db
     .select({
       id: job.id,
       slug: job.slug,
@@ -39,6 +40,8 @@ export default async function CareersPage() {
     .from(job)
     .where(eq(job.active, true))
     .orderBy(asc(job.sortOrder), asc(job.fa))
+
+  const jobs = allJobs.filter((j) => isHiringJob(j.slug))
 
   const jsonLd = {
     '@context': 'https://schema.org',

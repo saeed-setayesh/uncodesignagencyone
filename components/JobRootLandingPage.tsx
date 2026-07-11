@@ -14,6 +14,9 @@ import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import FaqSection from '@/components/page-sections/FaqSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import BottomCta from '@/components/page-sections/BottomCta'
+import PortfolioShowcaseSection from '@/components/portfolio/PortfolioShowcaseSection'
+import PriceCalculatorPromoSection from '@/components/page-sections/PriceCalculatorPromoSection'
+import ExpandableLinkGrid from '@/components/ExpandableLinkGrid'
 import type { Metadata } from 'next'
 
 import { getSiteOrigin } from '@/lib/site-url'
@@ -31,7 +34,7 @@ export async function generateJobRootMetadata(jobSlug: string): Promise<Metadata
     .where(and(eq(jobTable.slug, jobSlug), eq(jobTable.active, true)))
     .limit(1)
   if (!j) return {}
-  const title = j.metaTitle?.trim() || `${j.fa} — فرصت‌های شغلی`
+  const title = j.metaTitle?.trim() || `${j.fa} — همکاری از تیم ما`
   const desc = j.metaDescription?.trim() || j.seoBody.replace(/\s+/g, ' ').slice(0, 160)
   const url = `${SITE_URL}/${jobSlug}`
   return {
@@ -93,39 +96,45 @@ export default async function JobRootLandingPage({ jobSlug }: Props) {
           contactHref={contactHref}
         />
         <StatsBar stats={sales.stats} />
+        <PortfolioShowcaseSection />
         <BenefitsSection
           benefits={sales.benefits}
-          title={`چرا برای ${job.fa} با ما کار کنید؟`}
-          subheading="شفافیت، تعرفه و مسیر از تماس تا شروع"
+          title={`چرا برای ${job.fa} با ما تماس بگیرید؟`}
+          subheading="برای کسب‌وکارهایی که می‌خواهند این تخصص را از تیم ما روی پروژهٔ خود داشته باشند"
         />
-        <JobPricingSection jobFa={job.fa} jobSlug={jobSlug} plans={plans} />
+        <PriceCalculatorPromoSection />
+        {/* تعرفه‌های نقشی موقتاً غیرفعال — برآورد قیمت بالا کار را می‌کند.
+        <JobPricingSection jobFa={job.fa} jobSlug={jobSlug} plans={plans} /> */}
         <ProcessSection
           steps={sales.processSteps}
-          subheading="از ارسال درخواست تا شروع همکاری"
+          subheading="از تماس شما تا شروع همکاری روی پروژه"
           pale
         />
         <TestimonialsSection />
         <FaqSection faq={sales.faq} />
         <BottomCta heading={sales.ctaHeading} subtext={sales.ctaSubtext} />
         {otherJobs.length > 0 && (
-          <section className="py-12 bg-slate-50/60 border-t border-slate-100" aria-label="سایر موقعیت‌ها">
+          <section className="py-12 bg-slate-50/60 border-t border-slate-100" aria-label="سایر تخصص‌ها">
             <div className="max-w-4xl mx-auto px-4">
-              <h2 className="text-xl font-bold text-gray-900 text-center mb-2">سایر فرصت‌های شغلی</h2>
-              <p className="text-center text-slate-500 text-sm mb-6">همهٔ موقعیت‌های فعال — صفحهٔ اختصاصی هر نقش</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {otherJobs.map((j) => (
-                  <Link
-                    key={j.id}
-                    href={`/${j.slug}`}
-                    className="block text-center py-3 px-3 rounded-xl border border-slate-200/90 bg-white text-sm text-slate-800 hover:border-brand hover:text-brand transition-colors"
-                  >
-                    {j.fa}
-                  </Link>
-                ))}
-              </div>
+              <h2 className="text-xl font-bold text-gray-900 text-center mb-2">سایر تخصص‌ها از تیم ما</h2>
+              <p className="text-center text-slate-500 text-sm mb-6">
+                به نقش دیگری هم نیاز دارید؟ صفحهٔ همان تخصص را باز کنید و تماس بگیرید.
+              </p>
+              <ExpandableLinkGrid
+                items={otherJobs.map((j) => ({
+                  id: j.id,
+                  href: `/${j.slug}`,
+                  label: j.fa,
+                }))}
+                gridClassName="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                linkClassName="block text-center py-3 px-3 rounded-xl border border-slate-200/90 bg-white text-sm text-slate-800 hover:border-brand hover:text-brand transition-colors"
+                collapsedMaxHeightClass="max-h-[220px]"
+                fadeGradientClass="bg-gradient-to-t from-slate-50 to-transparent"
+                minItemsToCollapse={7}
+              />
               <p className="text-center mt-6">
                 <Link href="/careers" className="text-brand text-sm font-medium hover:underline">
-                  مشاهدهٔ همه موقعیت‌ها ←
+                  فهرست همهٔ تخصص‌ها ←
                 </Link>
               </p>
             </div>
@@ -133,21 +142,22 @@ export default async function JobRootLandingPage({ jobSlug }: Props) {
         )}
         <section id="city-jobs" className="py-12 bg-white border-t border-gray-100">
           <div className="max-w-4xl mx-auto px-4">
-            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">موقعیت در شهرها</h2>
+            <h2 className="text-xl font-bold text-gray-900 text-center mb-2">همکاری در شهرهای مختلف</h2>
             <p className="text-center text-gray-500 text-sm mb-6">
-              برای {job.fa} در هر شهر صفحهٔ اختصاصی داریم — روی شهر خود کلیک کنید.
+              همین تخصص را برای هماهنگی محلی یا ذکر شهر در درخواست انتخاب کنید؛ روی شهر خود کلیک کنید.
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {cities.map((c) => (
-                <Link
-                  key={c.id}
-                  href={`/${jobSlug}/${c.slug}`}
-                  className="block text-center py-2.5 px-2 rounded-lg border border-gray-200 text-sm hover:border-brand hover:text-brand"
-                >
-                  {c.fa}
-                </Link>
-              ))}
-            </div>
+            <ExpandableLinkGrid
+              items={cities.map((c) => ({
+                id: c.id,
+                href: `/${jobSlug}/${c.slug}`,
+                label: c.fa,
+              }))}
+              gridClassName="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+              linkClassName="block text-center py-2.5 px-2 rounded-lg border border-gray-200 bg-white text-sm hover:border-brand hover:text-brand"
+              collapsedMaxHeightClass="max-h-[280px]"
+              fadeGradientClass="bg-gradient-to-t from-white to-transparent"
+              minItemsToCollapse={9}
+            />
           </div>
         </section>
       </main>

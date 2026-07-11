@@ -3,6 +3,9 @@ import { asc, desc, eq } from 'drizzle-orm'
 import { blogPost, db, industry, job, service } from '@/lib/db'
 import type { MetadataRoute } from 'next'
 import { getSiteOrigin } from '@/lib/site-url'
+import { isAiLearningJob } from '@/lib/learning-jobs'
+import { isSoftwareProduct } from '@/lib/software-products'
+import { isLegacyDuplicateServiceSlug } from '@/lib/service-slug-canonical'
 
 type SitemapItem = MetadataRoute.Sitemap[number]
 
@@ -63,6 +66,30 @@ export const buildSitemapEntries = cache(async (): Promise<MetadataRoute.Sitemap
       priority: 0.78,
     },
     {
+      url: absoluteSitemapLoc(SITE_URL, '/learn'),
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.82,
+    },
+    {
+      url: absoluteSitemapLoc(SITE_URL, '/learn/ai'),
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.84,
+    },
+    {
+      url: absoluteSitemapLoc(SITE_URL, '/software'),
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.86,
+    },
+    {
+      url: absoluteSitemapLoc(SITE_URL, '/price-calculator'),
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+    {
       url: absoluteSitemapLoc(SITE_URL, '/portfolio'),
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
@@ -114,6 +141,17 @@ export const buildSitemapEntries = cache(async (): Promise<MetadataRoute.Sitemap
   }
 
   for (const s of services) {
+    if (isLegacyDuplicateServiceSlug(s.slug)) continue
+    if (isSoftwareProduct(s.slug)) {
+      const publicSlug = s.slug.replace(/^software-/, '')
+      out.push({
+        url: absoluteSitemapLoc(SITE_URL, `/software/${publicSlug}`),
+        lastModified: s.updatedAt ?? new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      })
+      continue
+    }
     out.push({
       url: absoluteSitemapLoc(SITE_URL, `/${s.slug}`),
       lastModified: s.updatedAt ?? new Date(),
@@ -123,6 +161,8 @@ export const buildSitemapEntries = cache(async (): Promise<MetadataRoute.Sitemap
   }
 
   for (const s of services) {
+    if (isLegacyDuplicateServiceSlug(s.slug)) continue
+    if (isSoftwareProduct(s.slug)) continue
     for (const ind of industries) {
       out.push({
         url: absoluteSitemapLoc(SITE_URL, `/${s.slug}/${ind.slug}`),
@@ -134,12 +174,21 @@ export const buildSitemapEntries = cache(async (): Promise<MetadataRoute.Sitemap
   }
 
   for (const j of jobs) {
-    out.push({
-      url: absoluteSitemapLoc(SITE_URL, `/${j.slug}`),
-      lastModified: j.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.72,
-    })
+    if (isAiLearningJob(j.slug)) {
+      out.push({
+        url: absoluteSitemapLoc(SITE_URL, `/learn/${j.slug}`),
+        lastModified: j.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.75,
+      })
+    } else {
+      out.push({
+        url: absoluteSitemapLoc(SITE_URL, `/${j.slug}`),
+        lastModified: j.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.72,
+      })
+    }
   }
 
   return out

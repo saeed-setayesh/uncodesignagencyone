@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { EnamadTrustSeal } from '@/components/EnamadTrustSeal'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
@@ -164,6 +165,10 @@ export default function TeamPage() {
               >
                 ببینید چه نوع پروژه‌هایی انجام می‌دهیم — نمونه کارها
               </Link>
+            </div>
+            <div className="mt-10 pt-8 border-t border-gray-200 flex flex-col items-center gap-2">
+              <p className="text-sm text-gray-500">نماد اعتماد الکترونیکی</p>
+              <EnamadTrustSeal />
             </div>
           </div>
         </section>

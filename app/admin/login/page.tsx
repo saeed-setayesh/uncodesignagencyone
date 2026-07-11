@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { BrandMark } from '@/components/BrandMark'
+import { redirectAfterSignIn } from '@/lib/auth-redirect'
+import { BrandLogo } from '@/components/BrandLogo'
 
 export default function AdminLoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -28,7 +27,7 @@ export default function AdminLoginPage() {
     if (result?.error) {
       setError('ایمیل یا رمز عبور اشتباه است')
     } else {
-      router.push('/admin')
+      redirectAfterSignIn('/admin')
     }
   }
 
@@ -37,8 +36,8 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="text-center mb-8">
-            <div className="mx-auto mb-4">
-              <BrandMark size="lg" />
+            <div className="mx-auto mb-4 flex justify-center">
+              <BrandLogo size="lg" />
             </div>
             <h1 className="text-xl font-bold text-gray-900">پنل مدیریت</h1>
             <p className="text-sm text-gray-500 mt-1">آنکو دیزاین</p>

@@ -17,6 +17,11 @@ import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import FaqSection from '@/components/page-sections/FaqSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import BottomCta from '@/components/page-sections/BottomCta'
+import ExpandableLinkGrid from '@/components/ExpandableLinkGrid'
+import PortfolioShowcaseSection from '@/components/portfolio/PortfolioShowcaseSection'
+import WhatWeDoSection from '@/components/page-sections/WhatWeDoSection'
+import PayAfterPreviewSection from '@/components/page-sections/PayAfterPreviewSection'
+import { resolveServiceDeliverables } from '@/lib/service-deliverables-fallback'
 import { getSiteOrigin } from '@/lib/site-url'
 
 interface Props {
@@ -47,6 +52,7 @@ export default async function ServiceRootLandingPage({ serviceSlug }: Props) {
     .orderBy(asc(industry.fa))
 
   const plans = parseServicePricingPlans(row.pricingPlans, row.priceTier)
+  const deliverables = resolveServiceDeliverables(serviceSlug, serviceFa, row.deliverables)
 
   const siteUrl = getSiteOrigin()
   const pageUrl = `${siteUrl}/${serviceSlug}`
@@ -85,13 +91,17 @@ export default async function ServiceRootLandingPage({ serviceSlug }: Props) {
       <main>
         <HeroSection content={content} />
         <StatsBar stats={content.stats} />
+        <PortfolioShowcaseSection />
+        <WhatWeDoSection serviceFa={serviceFa} deliverables={deliverables} />
         <BenefitsSection benefits={content.benefits} />
         <PricingSection
           industry={SERVICE_ROOT_PRICING_INDUSTRY}
           serviceFa={serviceFa}
           plans={plans}
           serviceRootPage
+          serviceSlug={serviceSlug}
         />
+        <PayAfterPreviewSection />
         <ProcessSection
           steps={content.processSteps}
           subheading="گام‌به‌گام و شفاف — بدون فرآیند مبهم"
@@ -122,17 +132,18 @@ export default async function ServiceRootLandingPage({ serviceSlug }: Props) {
                 هنوز صنفی برای این سرویس در فهرست ثبت نشده است.
               </p>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                {industries.map((ind) => (
-                  <Link
-                    key={ind.id}
-                    href={`/${serviceSlug}/${ind.slug}`}
-                    className="block text-center py-2.5 px-2 rounded-lg border border-gray-200 bg-white text-sm hover:border-brand hover:text-brand"
-                  >
-                    {ind.fa}
-                  </Link>
-                ))}
-              </div>
+              <ExpandableLinkGrid
+                items={industries.map((ind) => ({
+                  id: ind.id,
+                  href: `/${serviceSlug}/${ind.slug}`,
+                  label: ind.fa,
+                }))}
+                gridClassName="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2"
+                linkClassName="block text-center py-2.5 px-2 rounded-lg border border-gray-200 bg-white text-sm hover:border-brand hover:text-brand"
+                collapsedMaxHeightClass="max-h-[280px]"
+                fadeGradientClass="bg-gradient-to-t from-white to-transparent"
+                minItemsToCollapse={9}
+              />
             )}
             <p className="text-center mt-10">
               <Link href="/" className="text-brand text-sm hover:underline">

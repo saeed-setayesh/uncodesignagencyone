@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { BrandMark } from '@/components/BrandMark'
+import { BrandLogo } from '@/components/BrandLogo'
 
 export default function CustomerRegisterPage() {
   const router = useRouter()
@@ -51,8 +51,8 @@ export default function CustomerRegisterPage() {
       <div className="w-full max-w-sm">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="text-center mb-8">
-            <div className="mx-auto mb-4">
-              <BrandMark size="lg" />
+            <div className="mx-auto mb-4 flex justify-center">
+              <BrandLogo size="lg" />
             </div>
             <h1 className="text-xl font-bold text-gray-900">ثبت‌نام مشتری</h1>
             <p className="text-sm text-gray-500 mt-1">ایجاد حساب برای سفارش و پشتیبانی</p>

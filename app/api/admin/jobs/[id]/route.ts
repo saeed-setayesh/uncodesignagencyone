@@ -70,7 +70,7 @@ export async function PUT(req: Request, { params }: Context) {
       if (!plansParsed.success) {
         return NextResponse.json({ error: 'فرمت پلن‌های قیمت نامعتبر است' }, { status: 400 })
       }
-      pricingPlansValue = plansParsed.data as Record<string, unknown>
+      pricingPlansValue = plansParsed.data as unknown as Record<string, unknown>
     }
 
     const [slugClash] = await db

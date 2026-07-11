@@ -48,6 +48,8 @@ export const service = pgTable('Service', {
   active: boolean('active').notNull().default(true),
   sortOrder: integer('sortOrder').notNull().default(0),
   rootHeroJson: jsonb('rootHeroJson'),
+  /** تحویل‌ها و «چه می‌کنیم» — ساختار ServiceDeliverables */
+  deliverables: jsonb('deliverables'),
   createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
   updatedAt: timestamp('updatedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
 })
@@ -268,6 +270,132 @@ export const ticketMessage = pgTable(
   })
 )
 
+/** پنل دانشجو — ورود با موبایل و رمز تولیدشده در ادمین */
+export const studentUser = pgTable('StudentUser', {
+  id: text('id').primaryKey(),
+  phone: text('phone').notNull().unique(),
+  password: text('password').notNull(),
+  name: text('name').notNull().default(''),
+  active: boolean('active').notNull().default(true),
+  createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  updatedAt: timestamp('updatedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+})
+
+export const studentEnrollment = pgTable(
+  'StudentEnrollment',
+  {
+    id: text('id').primaryKey(),
+    studentId: text('studentId')
+      .notNull()
+      .references(() => studentUser.id, { onDelete: 'cascade' }),
+    courseTitle: text('courseTitle').notNull(),
+    courseDescription: text('courseDescription').notNull().default(''),
+    sessionCount: integer('sessionCount').notNull().default(0),
+    /** Number of class sessions marked as completed by admin (sessions 1..N). */
+    sessionsCompletedCount: integer('sessionsCompletedCount').notNull().default(0),
+    priceToman: integer('priceToman').notNull(),
+    /** full | split — null until student chooses */
+    paymentPlan: text('paymentPlan'),
+    teacherName: text('teacherName').notNull().default(''),
+    teacherPhone: text('teacherPhone').notNull().default(''),
+    paymentCardNumber: text('paymentCardNumber').notNull().default(''),
+    paymentShaba: text('paymentShaba').notNull().default(''),
+    paymentCardHolder: text('paymentCardHolder').notNull().default(''),
+    paymentBankName: text('paymentBankName').notNull().default(''),
+    /** Admin can unlock 2nd installment before mid-course date */
+    secondPaymentUnlocked: boolean('secondPaymentUnlocked').notNull().default(false),
+    status: text('status').notNull().default('pending_contract'),
+    courseStartsAt: timestamp('courseStartsAt', { mode: 'date', precision: 3 }),
+    courseEndsAt: timestamp('courseEndsAt', { mode: 'date', precision: 3 }),
+    jobSlug: text('jobSlug'),
+    adminNotes: text('adminNotes').notNull().default(''),
+    createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+    updatedAt: timestamp('updatedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  },
+  (t) => ({
+    studentIdx: index('StudentEnrollment_studentId_idx').on(t.studentId),
+  })
+)
+
+export const studentSession = pgTable(
+  'StudentSession',
+  {
+    id: text('id').primaryKey(),
+    enrollmentId: text('enrollmentId')
+      .notNull()
+      .references(() => studentEnrollment.id, { onDelete: 'cascade' }),
+    sessionNumber: integer('sessionNumber').notNull(),
+    startsAt: timestamp('startsAt', { mode: 'date', precision: 3 }).notNull(),
+    endsAt: timestamp('endsAt', { mode: 'date', precision: 3 }).notNull(),
+    note: text('note').notNull().default(''),
+    createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  },
+  (t) => ({
+    enrollmentIdx: index('StudentSession_enrollmentId_idx').on(t.enrollmentId),
+  })
+)
+
+export const studentPayment = pgTable(
+  'StudentPayment',
+  {
+    id: text('id').primaryKey(),
+    enrollmentId: text('enrollmentId')
+      .notNull()
+      .references(() => studentEnrollment.id, { onDelete: 'cascade' }),
+    sequence: integer('sequence').notNull(),
+    amountToman: integer('amountToman').notNull(),
+    /** pending | reported | confirmed */
+    status: text('status').notNull().default('pending'),
+    reportedAt: timestamp('reportedAt', { mode: 'date', precision: 3 }),
+    confirmedAt: timestamp('confirmedAt', { mode: 'date', precision: 3 }),
+    confirmedByAdminId: text('confirmedByAdminId').references(() => adminUser.id),
+    createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  },
+  (t) => ({
+    enrollmentSeqUnique: uniqueIndex('StudentPayment_enrollmentId_sequence_key').on(
+      t.enrollmentId,
+      t.sequence
+    ),
+  })
+)
+
+export const studentContractAcceptance = pgTable(
+  'StudentContractAcceptance',
+  {
+    id: text('id').primaryKey(),
+    enrollmentId: text('enrollmentId')
+      .notNull()
+      .references(() => studentEnrollment.id, { onDelete: 'cascade' }),
+    termsVersion: text('termsVersion').notNull(),
+    acceptedAt: timestamp('acceptedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+    ip: text('ip').notNull().default(''),
+    userAgent: text('userAgent').notNull().default(''),
+  },
+  (t) => ({
+    enrollmentUnique: uniqueIndex('StudentContractAcceptance_enrollmentId_key').on(t.enrollmentId),
+  })
+)
+
+export const studentCertificate = pgTable(
+  'StudentCertificate',
+  {
+    id: text('id').primaryKey(),
+    enrollmentId: text('enrollmentId')
+      .notNull()
+      .references(() => studentEnrollment.id, { onDelete: 'cascade' }),
+    trackingNumber: text('trackingNumber').notNull().unique(),
+    studentName: text('studentName').notNull(),
+    courseTitle: text('courseTitle').notNull(),
+    sessionCount: integer('sessionCount').notNull(),
+    issuedAt: timestamp('issuedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  },
+  (t) => ({
+    enrollmentUnique: uniqueIndex('StudentCertificate_enrollmentId_key').on(t.enrollmentId),
+    trackingIdx: index('StudentCertificate_trackingNumber_idx').on(t.trackingNumber),
+  })
+)
+
 export type City = typeof city.$inferSelect
 export type Industry = typeof industry.$inferSelect
 export type Service = typeof service.$inferSelect
@@ -285,3 +413,9 @@ export type PaymentTransaction = typeof paymentTransaction.$inferSelect
 export type ContractAcceptance = typeof contractAcceptance.$inferSelect
 export type SupportTicket = typeof supportTicket.$inferSelect
 export type TicketMessage = typeof ticketMessage.$inferSelect
+export type StudentUser = typeof studentUser.$inferSelect
+export type StudentEnrollment = typeof studentEnrollment.$inferSelect
+export type StudentSession = typeof studentSession.$inferSelect
+export type StudentPayment = typeof studentPayment.$inferSelect
+export type StudentContractAcceptance = typeof studentContractAcceptance.$inferSelect
+export type StudentCertificate = typeof studentCertificate.$inferSelect

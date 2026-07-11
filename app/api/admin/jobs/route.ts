@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       if (!plansParsed.success) {
         return NextResponse.json({ error: 'فرمت پلن‌های قیمت نامعتبر است' }, { status: 400 })
       }
-      plansJson = plansParsed.data as Record<string, unknown>
+      plansJson = plansParsed.data as unknown as Record<string, unknown>
     } else {
       plansJson = null
     }

@@ -1,4 +1,5 @@
-import * as fs from 'fs'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import { eq } from 'drizzle-orm'
@@ -18,6 +19,28 @@ import { syncCitiesFromCsv } from '../lib/cities-csv-sync'
 import { buildDefaultPricingPlans } from '../lib/default-pricing-plans'
 import { buildSeedServiceSeoBody } from '../lib/seed-default-seo-body'
 import { CITY_LEVEL_NEIGHBORHOOD_KEY } from '../lib/neighborhood'
+
+function loadEnvFile() {
+  const envPath = join(process.cwd(), '.env')
+  if (!existsSync(envPath)) return
+  for (const line of readFileSync(envPath, 'utf8').split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const eqIdx = trimmed.indexOf('=')
+    if (eqIdx === -1) continue
+    const key = trimmed.slice(0, eqIdx).trim()
+    let val = trimmed.slice(eqIdx + 1).trim()
+    if (
+      (val.startsWith('"') && val.endsWith('"')) ||
+      (val.startsWith("'") && val.endsWith("'"))
+    ) {
+      val = val.slice(1, -1)
+    }
+    if (process.env[key] === undefined) process.env[key] = val
+  }
+}
+
+loadEnvFile()
 
 const sampleContent = {
   metaTitle: 'طراحی سایت کلینیک در تهران — تحویل ۱۴ روزه',
@@ -91,7 +114,7 @@ async function main() {
   console.log(`✓ ${SERVICE_OFFERING_SEED.length} services seeded`)
 
   const citiesCsvPath = `${process.cwd()}/cites.csv`
-  if (fs.existsSync(citiesCsvPath)) {
+  if (existsSync(citiesCsvPath)) {
     console.log('Syncing cities from cites.csv (removes cities not in file, keeps seoDescription on update)...')
     const n = await syncCitiesFromCsv(db, citiesCsvPath)
     console.log(`✓ ${n} cities synced`)
@@ -100,7 +123,7 @@ async function main() {
   }
 
   const xlsxPath = `${process.cwd()}/data/200-industries-iran-web-agency.xlsx`
-  if (fs.existsSync(xlsxPath)) {
+  if (existsSync(xlsxPath)) {
     console.log('Importing industries from Excel...')
     const { count, slugs } = await importIndustriesFromXlsx(db, xlsxPath)
     const removed = await deleteIndustriesNotInList(db, slugs)

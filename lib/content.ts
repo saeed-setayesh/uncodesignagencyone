@@ -123,7 +123,7 @@ Return a JSON object with EXACTLY these fields (all text must be in Farsi):
   "metaTitle": "${serviceFa} ${ind.fa} در ${cityRow.fa} — آژانس دیجیتال",
   "metaDescription": "max 155 chars, include city, service name + CTA",
   "h1": "${serviceFa} حرفه‌ای ${ind.fa} در ${cityRow.fa}",
-  "heroSubtitle": "1-2 sentence value proposition specific to ${serviceFa} for ${ind.fa} businesses in ${cityRow.fa}",
+  "heroSubtitle": "VERY SHORT (max ~20 words Farsi): 'Need ${serviceFa} for ${ind.fa} in ${cityRow.fa}? Contact us.' + optional half-sentence on clear pricing. No long paragraphs.",
   "urgencyText": "scarcity message e.g. فقط ۲ ظرفیت خالی این ماه",
   "stats": {
     "projects": "+۱۴۰",
@@ -159,8 +159,10 @@ Return a JSON object with EXACTLY these fields (all text must be in Farsi):
 
 Rules:
 - All text in Farsi (Persian script)
-- Benefits and FAQ must be specific to ${serviceFa} for the ${ind.fa} industry
+- Audience: local business owners hiring the agency — not SEO jargon for crawlers. Benefits and FAQ must explain why to call you and what they get, for ${serviceFa} and ${ind.fa} in ${cityRow.fa}.
 - Testimonials must mention ${cityRow.fa}
+- Avoid empty phrases about 'خواندن در گوگل' or 'الگوی شهر دیگر'; prefer clear CTAs (تماس، پیشنهاد قیمت، تحویل).
+- Payment positioning: do not promise large upfront deposits or prepayment to start work; prefer language where the client reviews an initial deliverable or first version before payment milestones (align with pay-after-preview trust model).
 - Return ONLY valid JSON, no markdown, no code fences`
 }
 

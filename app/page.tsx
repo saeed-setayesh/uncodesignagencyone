@@ -4,9 +4,21 @@ import { city, db, industry, service as serviceTable } from '@/lib/db'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
-import { getHomeServiceIcon } from '@/lib/home-service-icons'
-import { parseServicePricingPlans } from '@/lib/parse-pricing-plans'
-import { Phone, Zap, Shield, HeadphonesIcon, Target, Check, ArrowDownLeft } from 'lucide-react'
+import PortfolioShowcaseSection from '@/components/portfolio/PortfolioShowcaseSection'
+import PriceCalculatorPromoSection from '@/components/page-sections/PriceCalculatorPromoSection'
+import { buildHomeOfferCards, homeCardPriceBody } from '@/lib/home-service-cards'
+import {
+  Phone,
+  Zap,
+  Shield,
+  HeadphonesIcon,
+  Target,
+  Check,
+  MessageCircle,
+  Calculator,
+  ArrowLeft,
+  Sparkles,
+} from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -46,6 +58,8 @@ const TECH_LABELS = [
   'Git',
 ]
 
+/** یک پیشوند «از» برای کارت قیمت؛ اگر برچسب پلن از قبل با «از» ذخیره شده بود تکرار نمی‌شود */
+
 const WHY_US = [
   { Icon: Zap, title: 'تحویل به موقع', desc: 'هر پروژه در بازه زمانی دقیق تحویل می‌شود. بدون تأخیر، بدون توجیه.' },
   { Icon: Target, title: 'نتیجه‌محور', desc: 'هدف ما رشد کسب‌وکار شماست، نه فقط تحویل فایل. نتایج واقعی قابل اندازه‌گیری.' },
@@ -65,6 +79,7 @@ export default async function HomePage() {
   ])
   const industryCount = Number(industryCountRow[0]?.c ?? 0)
   const cityCount = Number(cityCountRow[0]?.c ?? 0)
+  const offerCards = buildHomeOfferCards(services)
 
   const stats = [
     { value: '+۱۴۰', label: 'پروژه تحویل‌شده' },
@@ -77,50 +92,88 @@ export default async function HomePage() {
     <>
       <Navbar />
       <main>
-        <section className="relative text-center overflow-hidden">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-slate-50/40 to-slate-50" />
-          <div className="max-w-3xl mx-auto px-4 pt-16 pb-5 md:pt-20 md:pb-7">
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-5xl leading-[1.2]">
-              حضور آنلاین حرفه‌ای
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-brand-light/70 via-white to-slate-50" />
+          <div className="pointer-events-none absolute -top-20 end-0 h-80 w-80 rounded-full bg-brand/15 blur-3xl -z-10" />
+          <div className="pointer-events-none absolute bottom-0 start-0 h-64 w-64 rounded-full bg-brand/10 blur-3xl -z-10" />
+
+          <div className="bg-brand text-white text-center py-2.5 px-4 text-sm font-medium">
+            <span className="inline-block w-2 h-2 bg-white rounded-full animate-pulse mx-2 align-middle" />
+            مشاوره و برآورد اولیه رایگان — پاسخگویی سریع در ساعات کاری
+          </div>
+
+          <div className="max-w-4xl mx-auto px-4 py-14 md:py-20 text-center" dir="rtl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand/25 bg-white/90 px-4 py-1.5 text-sm text-brand-dark mb-6 shadow-sm">
+              <Sparkles className="w-4 h-4 text-brand" aria-hidden />
+              طراحی سایت · سئو · نرم‌افزار · آموزش
+            </span>
+
+            <h1 className="text-3xl md:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight text-slate-900 leading-[1.15] mb-5">
+              کسب‌وکار شما آنلاین،
+              <span className="block mt-1 text-brand-dark">حرفه‌ای و قابل رشد</span>
             </h1>
-            <p className="mt-4 text-slate-600 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
-              سایت، فروشگاه و سئو — از طراحی تا اجرا. مشاوره رایگان بگیرید.
+
+            <p className="text-base md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed mb-8">
+              از لندینگ و فروشگاه تا سئو و نرم‌افزار اختصاصی — یک تیم، یک مسئولیت، تحویل شفاف.
+              <span className="block mt-2 text-sm md:text-base text-slate-500">
+                بدون پیش‌پرداخت برای جلسهٔ آشنایی — قیمت و زمان‌بندی را قبل از شروع می‌دانید.
+              </span>
             </p>
-            <div className="mt-8 flex flex-col items-stretch sm:flex-row sm:items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto">
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-lg sm:max-w-none mx-auto mb-8">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3.5 text-sm font-semibold text-white shadow-sm shadow-brand/20 transition hover:bg-brand-dark"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-7 py-3.5 text-base font-bold text-white shadow-lg shadow-brand/25 transition hover:bg-brand-dark"
               >
-                <Phone className="h-4 w-4" />
+                <MessageCircle className="h-5 w-5" aria-hidden />
                 مشاوره رایگان
               </Link>
               <Link
                 href="/portfolio"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-medium text-slate-800 shadow-sm transition hover:border-brand/40 hover:text-brand"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-7 py-3.5 text-base font-semibold text-slate-800 transition hover:border-brand hover:text-brand"
               >
                 نمونه کارها
               </Link>
               <Link
-                href="#services"
-                className="inline-flex items-center justify-center gap-2 rounded-xl text-sm font-medium text-slate-600 hover:text-brand"
+                href="/price-calculator"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-7 py-3.5 text-base font-semibold text-slate-800 transition hover:bg-slate-200"
               >
-                <ArrowDownLeft className="h-4 w-4" />
-                خدمات
+                <Calculator className="h-5 w-5" aria-hidden />
+                برآورد قیمت
               </Link>
             </div>
+
+            <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-slate-600 mb-2">
+              {['تحویل ۱۴ روزه', 'پشتیبانی ۶ ماهه', 'مالکیت کامل کد'].map((item) => (
+                <li key={item} className="inline-flex items-center gap-1.5">
+                  <Check className="h-4 w-4 text-brand shrink-0" strokeWidth={2.5} aria-hidden />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="#services"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:underline mt-2"
+            >
+              مشاهده خدمات
+              <ArrowLeft className="h-4 w-4" aria-hidden />
+            </Link>
           </div>
 
-          <div className="border-t border-slate-100 bg-white/80">
+          <div className="border-t border-brand/10 bg-white/70 backdrop-blur-sm">
             <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 px-4 py-8 md:grid-cols-4 md:gap-4">
               {stats.map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <div className="text-2xl font-bold tabular-nums text-slate-900 md:text-3xl">{stat.value}</div>
+                  <div className="text-2xl font-black tabular-nums text-brand md:text-3xl">{stat.value}</div>
                   <div className="mt-1 text-xs text-slate-500 md:text-sm">{stat.label}</div>
                 </div>
               ))}
             </div>
           </div>
         </section>
+
+        <PortfolioShowcaseSection />
 
         <section id="services" className="relative py-20 bg-gradient-to-b from-slate-50 via-white to-slate-50">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand/40 to-transparent" />
@@ -137,26 +190,20 @@ export default async function HomePage() {
               </p>
             </div>
 
-            {services.length === 0 ? (
+            {offerCards.length === 0 ? (
               <p className="text-center text-slate-500">در حال حاضر سرویسی در پایگاه داده ثبت نشده.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-8">
-                {services.map((svc) => {
-                  const plans = parseServicePricingPlans(svc.pricingPlans, svc.priceTier)
-                  const p0 = plans[0]
-                  const priceLabel = p0?.priceLabel ?? '—'
-                  const priceNote = p0?.description ?? p0?.name ?? ''
-                  const blurb = (svc.metaDescription?.trim() || p0?.description || '').replace(/\s+/g, ' ')
-                  const featureLines = (p0?.features ?? []).slice(0, 5)
-                  const Icon = getHomeServiceIcon(svc.slug)
-                  const href = `/${svc.slug}`
+                {offerCards.map((card) => {
+                  const Icon = card.Icon
+                  const showFromPrefix = !/رایگان|RFP|—/u.test(card.priceLabel)
 
                   return (
                     <div
-                      key={svc.id}
+                      key={card.id}
                       className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-brand/30 hover:shadow-xl hover:shadow-brand/10"
                     >
-                      {p0?.featured && (
+                      {card.featured && (
                         <div className="absolute top-4 start-4 z-10 text-xs font-bold px-3 py-1 rounded-full bg-brand text-white">
                           پیشنهادی
                         </div>
@@ -167,11 +214,13 @@ export default async function HomePage() {
                         >
                           <Icon className="h-7 w-7" strokeWidth={1.75} aria-hidden />
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">{svc.fa}</h3>
-                        {blurb && <p className="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3">{blurb}</p>}
-                        {featureLines.length > 0 && (
+                        <h3 className="text-lg font-bold text-slate-900">{card.title}</h3>
+                        {card.blurb && (
+                          <p className="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3">{card.blurb}</p>
+                        )}
+                        {card.features.length > 0 && (
                           <ul className="mt-4 space-y-2">
-                            {featureLines.map((f) => (
+                            {card.features.map((f) => (
                               <li key={f} className="flex items-start gap-2 text-sm text-slate-700">
                                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" strokeWidth={2.5} aria-hidden />
                                 {f}
@@ -182,11 +231,15 @@ export default async function HomePage() {
                       </div>
                       <div className="border-t border-slate-100 bg-slate-50/80 p-6">
                         <div className="mb-4">
-                          <span className="text-xl font-black text-slate-900 md:text-2xl">از {priceLabel}</span>
-                          {priceNote && <span className="text-xs text-slate-500 block mt-1">{priceNote}</span>}
+                          <span className="text-xl font-black text-slate-900 md:text-2xl">
+                            {showFromPrefix ? `از ${homeCardPriceBody(card.priceLabel)}` : card.priceLabel}
+                          </span>
+                          {card.priceNote && (
+                            <span className="text-xs text-slate-500 block mt-1">{card.priceNote}</span>
+                          )}
                         </div>
                         <Link
-                          href={href}
+                          href={card.href}
                           className="block text-center rounded-xl bg-brand py-3 text-sm font-bold text-white transition hover:bg-brand-dark"
                         >
                           اطلاعات بیشتر
@@ -199,6 +252,8 @@ export default async function HomePage() {
             )}
           </div>
         </section>
+
+        <PriceCalculatorPromoSection />
 
         <section className="py-20 bg-white">
           <div className="max-w-5xl mx-auto px-4">

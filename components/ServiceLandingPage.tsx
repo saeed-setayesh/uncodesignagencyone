@@ -15,6 +15,10 @@ import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import FaqSection from '@/components/page-sections/FaqSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import BottomCta from '@/components/page-sections/BottomCta'
+import PortfolioShowcaseSection from '@/components/portfolio/PortfolioShowcaseSection'
+import WhatWeDoSection from '@/components/page-sections/WhatWeDoSection'
+import PayAfterPreviewSection from '@/components/page-sections/PayAfterPreviewSection'
+import { resolveServiceDeliverables } from '@/lib/service-deliverables-fallback'
 import IndustryHubCityNav from '@/components/IndustryHubCityNav'
 import BlogMarkdown from '@/components/blog/BlogMarkdown'
 import { SITE_URGENCY_BAR } from '@/lib/site-urgency'
@@ -149,6 +153,7 @@ export default async function ServiceLandingPage({
 
   const serviceFa = svcRow.fa
   const plans = parseServicePricingPlans(svcRow.pricingPlans, svcRow.priceTier)
+  const deliverables = resolveServiceDeliverables(service, serviceFa, svcRow.deliverables)
 
   const siteUrl = getSiteOrigin()
   let pageUrl: string
@@ -227,8 +232,11 @@ export default async function ServiceLandingPage({
       <main>
         <HeroSection content={pageContent} />
         <StatsBar stats={pageContent.stats} />
+        <PortfolioShowcaseSection />
+        <WhatWeDoSection serviceFa={serviceFa} deliverables={deliverables} />
         <BenefitsSection benefits={pageContent.benefits} />
-        <PricingSection industry={ind} serviceFa={serviceFa} plans={plans} />
+        <PricingSection industry={ind} serviceFa={serviceFa} plans={plans} serviceSlug={service} />
+        <PayAfterPreviewSection />
         <ProcessSection
           steps={pageContent.processSteps}
           subheading="از تماس اول تا تحویل — مسیر شفاف"

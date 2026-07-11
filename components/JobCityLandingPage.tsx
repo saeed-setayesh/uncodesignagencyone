@@ -13,6 +13,8 @@ import BenefitsSection from '@/components/page-sections/BenefitsSection'
 import TestimonialsSection from '@/components/page-sections/TestimonialsSection'
 import FaqSection from '@/components/page-sections/FaqSection'
 import BottomCta from '@/components/page-sections/BottomCta'
+import PortfolioShowcaseSection from '@/components/portfolio/PortfolioShowcaseSection'
+import PriceCalculatorPromoSection from '@/components/page-sections/PriceCalculatorPromoSection'
 import JobPricingSection from '@/components/JobPricingSection'
 import ProcessSection from '@/components/page-sections/ProcessSection'
 import type { Metadata } from 'next'
@@ -95,11 +97,18 @@ export default async function JobCityLandingPage({ jobSlug, citySlug }: Props) {
       <main>
         <HeroSection content={pageContent} />
         <StatsBar stats={pageContent.stats} />
-        <BenefitsSection benefits={pageContent.benefits} />
-        <JobPricingSection jobFa={job.fa} jobSlug={jobSlug} plans={plans} />
+        <PortfolioShowcaseSection />
+        <BenefitsSection
+          benefits={pageContent.benefits}
+          title={`${job.fa} در ${city.fa} — همکاری با تیم ما`}
+          subheading="کارفرما هستید؟ نیاز و شهر را مطرح کنید؛ همان مسیر سراسری با توجه به همین شهر"
+        />
+        <PriceCalculatorPromoSection />
+        {/* تعرفه‌های نقشی موقتاً غیرفعال — برآورد قیمت بالا کار را می‌کند.
+        <JobPricingSection jobFa={job.fa} jobSlug={jobSlug} plans={plans} /> */}
         <ProcessSection
           steps={pageContent.processSteps}
-          subheading="مراحل همکاری در این موقعیت"
+          subheading="تماس تا شروع همکاری — با ذکر همین شهر در صورت نیاز حضوری یا هماهنگی محلی"
           pale
         />
         <TestimonialsSection />
