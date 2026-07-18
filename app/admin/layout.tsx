@@ -7,6 +7,7 @@ const navItems: PortalNavItem[] = [
   { href: '/admin', label: 'داشبورد', icon: '⊞' },
   { href: '/admin/customers', label: 'مشتریان', icon: '👤' },
   { href: '/admin/students', label: 'دانشجویان', icon: '🎓' },
+  { href: '/admin/certificates', label: 'گواهی‌ها', icon: '🏅' },
   { href: '/admin/revenue', label: 'درآمد و تراکنش‌ها', icon: '💰' },
   { href: '/admin/orders', label: 'سفارش‌ها', icon: '🧾' },
   { href: '/admin/support-tickets', label: 'تیکت پشتیبانی', icon: '🎫' },

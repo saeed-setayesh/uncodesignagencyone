@@ -7,6 +7,7 @@ export const RESERVED_TOP_LEVEL_SLUGS = new Set([
   'api',
   'blog',
   'careers',
+  'certificate',
   'cities',
   'contact',
   'industries',

@@ -26,6 +26,8 @@ const MIGRATION_FILES = [
   '0003_student_payment_shaba.sql',
   '0004_student_sessions_completed.sql',
   '0005_student_admin_certificate.sql',
+  '0006_training_certificate.sql',
+  '0007_training_certificate_standalone.sql',
 ]
 
 async function main() {

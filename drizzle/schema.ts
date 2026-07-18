@@ -396,6 +396,31 @@ export const studentCertificate = pgTable(
   })
 )
 
+/** Admin-issued English PDF certificate — standalone, not tied to student portal */
+export const trainingCertificate = pgTable(
+  'TrainingCertificate',
+  {
+    id: text('id').primaryKey(),
+    enrollmentId: text('enrollmentId').references(() => studentEnrollment.id, { onDelete: 'set null' }),
+    studentId: text('studentId').references(() => studentUser.id, { onDelete: 'set null' }),
+    trackingNumber: text('trackingNumber').notNull().unique(),
+    studentName: text('studentName').notNull(),
+    skillTitle: text('skillTitle').notNull(),
+    teacherName: text('teacherName').notNull(),
+    courseTitle: text('courseTitle').notNull(),
+    durationText: text('durationText').notNull(),
+    totalHours: integer('totalHours').notNull().default(0),
+    sessionCount: integer('sessionCount').notNull(),
+    courseStartsAt: timestamp('courseStartsAt', { mode: 'date', precision: 3 }),
+    courseEndsAt: timestamp('courseEndsAt', { mode: 'date', precision: 3 }),
+    issuedAt: timestamp('issuedAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+    createdAt: timestamp('createdAt', { mode: 'date', precision: 3 }).notNull().defaultNow(),
+  },
+  (t) => ({
+    trackingIdx: index('TrainingCertificate_trackingNumber_idx').on(t.trackingNumber),
+  })
+)
+
 export type City = typeof city.$inferSelect
 export type Industry = typeof industry.$inferSelect
 export type Service = typeof service.$inferSelect
@@ -419,3 +444,4 @@ export type StudentSession = typeof studentSession.$inferSelect
 export type StudentPayment = typeof studentPayment.$inferSelect
 export type StudentContractAcceptance = typeof studentContractAcceptance.$inferSelect
 export type StudentCertificate = typeof studentCertificate.$inferSelect
+export type TrainingCertificate = typeof trainingCertificate.$inferSelect
